@@ -1,34 +1,48 @@
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: black;
-    margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: black;
+  margin: 0;
 }
 
 #game-board {
-    display: grid;
-    grid-template-columns: repeat(17, 40px); /* 17x17 Grid */
-    grid-template-rows: repeat(17, 40px);
-    gap: 1px;
-    background-color: rgb(245, 245, 245);
+  display: grid;
+  grid-template-columns: repeat(17, 40px); /* 17x17 Grid */
+  grid-template-rows: repeat(17, 40px);
+  background-color: white;
 }
 
 .tile {
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  border: 1px solid rgb(213, 213, 213);
+  height: 40px;
 }
 
 .wall {
-    background-color: rgb(118, 118, 118);
-    box-shadow: inset 2px 2px 4px 2px rgb(172, 172, 172);
+  background-color: rgb(118, 118, 118);
+  box-shadow: inset 2px 2px 4px 2px rgb(172, 172, 172);
 }
 
 .destructible {
-    background-color: brown;
+  background-color: rgb(181, 181, 181);
 }
 
 .floor {
-    background-color: white;
+  background-color: white;
+}
+
+.player, .door, .bomb, .boom {
+  width: 40px;
+  height: 40px;
+  font-size: 36px; /* Make the emoji big */
+  padding-left: 2px;
+  padding-top: 2px;
+  justify-content: center;
+  align-items: center;
+  line-height: 40px; /* Center the emoji */
+  position: absolute;
+  transition: 0.1s; /* Smooth movement */
+  /* background-color: blue; */
 }
