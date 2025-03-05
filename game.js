@@ -42,8 +42,7 @@ function generateMap() {
   }
 
   // Randomly select a brick to hide the door
-  let hiddenDoor = //{ row: 8, col: 9 };
-  brickPositions[Math.floor(Math.random() * brickPositions.length)];
+  let hiddenDoor = brickPositions[Math.floor(Math.random() * brickPositions.length)];
 
   // Mark the hidden door position in the map
   map[hiddenDoor.row][hiddenDoor.col] = 3; // 3 represents a destructible brick with a hidden door
@@ -79,7 +78,7 @@ function createMap() {
       } else if (map[row][col] === 2) {
         tile.classList.add("destructible");
       } else if (map[row][col] === 3) {
-        tile.classList.add("door");
+        tile.classList.add("destructible");
       } else {
         tile.classList.add("floor");
       }
@@ -100,9 +99,7 @@ function updatePlayerPosition() {
 }
 
 function destroyBrick(row, col) {
-  if (map[row][col] === 2) {
-    map[row][col] = 0; // Change brick to floor
-
+  if (map[row][col] === 2 || map[row][col] === 3) {
     const tile = document.querySelector(
       `[data-row="${row}"][data-col="${col}"]`
     );
@@ -113,7 +110,7 @@ function destroyBrick(row, col) {
     // If this was the hidden door, show it after destruction
     if (map[row][col] === 3) {
       tile.classList.remove("destructible"); // Remove the destructible class
-      tile.classList.add("floor door");
+      tile.classList.add("door");
       tile.textContent = "🚪"; // Show door emoji
       tile.style.opacity = "100%"; // Ensure door is fully visible
     } else {
@@ -123,9 +120,7 @@ function destroyBrick(row, col) {
       tile.style.opacity = "100%"; // Ensure full visibility after destruction
     }
 
-    // Now the tile is destroyed, we need to update the state and not change it back
-    /*  tile.classList.remove("destructible"); // Remove the destructible class
-    tile.classList.add("floor"); // Ensure it stays a floor */
+    map[row][col] = 0; // Change brick to floor
   }
 }
 
@@ -216,7 +211,7 @@ function explode(row, col) {
         // If the hidden door is destroyed, reveal it
         tile.textContent = "🚪"; // Show door emoji
         tile.classList.remove("destructible");
-        tile.classList.add("floor door"); // Keep it as a door tile
+        tile.classList.add("door"); // Keep it as a door tile
       }
     }
   });
