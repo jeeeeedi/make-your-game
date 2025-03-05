@@ -1,0 +1,34 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: black;
+    margin: 0;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(17, 40px); /* 17x17 Grid */
+    grid-template-rows: repeat(17, 40px);
+    gap: 1px;
+    background-color: rgb(245, 245, 245);
+}
+
+.tile {
+    width: 40px;
+    height: 40px;
+}
+
+.wall {
+    background-color: rgb(118, 118, 118);
+    box-shadow: inset 2px 2px 4px 2px rgb(172, 172, 172);
+}
+
+.destructible {
+    background-color: brown;
+}
+
+.floor {
+    background-color: white;
+}
