@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <svg width="680" height="680" xmlns="http://www.w3.org/2000/svg">
+      <g id="permanentGrp">
+        <rect class="wallAndFloor" width="680" height="680" />
+        <rect class="innerBlock" width="40" height="40" x="80" y="80" />
+        <rect class="innerBlock" width="40" height="40" x="160" y="80" />
+        <rect class="innerBlock" width="40" height="40" x="240" y="80" />
+        <rect class="innerBlock" width="40" height="40" x="320" y="80" />
+        <rect class="innerBlock" width="40" height="40" x="400" y="80" />
+        <rect class="innerBlock" width="40" height="40" x="480" y="80" />
+        <rect class="innerBlock" width="40" height="40" x="560" y="80" />
+        <rect class="innerBlock" width="40" height="40" x="80" y="160" />
+        <rect class="innerBlock" width="40" height="40" x="160" y="160" />
+        <rect class="innerBlock" width="40" height="40" x="240" y="160" />
+        <rect class="innerBlock" width="40" height="40" x="320" y="160" />
+        <rect class="innerBlock" width="40" height="40" x="400" y="160" />
+        <rect class="innerBlock" width="40" height="40" x="480" y="160" />
+        <rect class="innerBlock" width="40" height="40" x="560" y="160" />
+        <rect class="innerBlock" width="40" height="40" x="80" y="240" />
+        <rect class="innerBlock" width="40" height="40" x="160" y="240" />
+        <rect class="innerBlock" width="40" height="40" x="240" y="240" />
+        <rect class="innerBlock" width="40" height="40" x="320" y="240" />
+        <rect class="innerBlock" width="40" height="40" x="400" y="240" />
+        <rect class="innerBlock" width="40" height="40" x="480" y="240" />
+        <rect class="innerBlock" width="40" height="40" x="560" y="240" />
+        <rect class="innerBlock" width="40" height="40" x="80" y="320" />
+        <rect class="innerBlock" width="40" height="40" x="160" y="320" />
+        <rect class="innerBlock" width="40" height="40" x="240" y="320" />
+        <!--<rect class="innerBlock" width="40" height="40" x="320" y="320" fill=yellow />-->
+        <rect class="innerBlock" width="40" height="40" x="400" y="320" />
+        <rect class="innerBlock" width="40" height="40" x="480" y="320" />
+        <rect class="innerBlock" width="40" height="40" x="560" y="320" />
+        <rect class="innerBlock" width="40" height="40" x="80" y="400" />
+        <rect class="innerBlock" width="40" height="40" x="160" y="400" />
+        <rect class="innerBlock" width="40" height="40" x="240" y="400" />
+        <rect class="innerBlock" width="40" height="40" x="320" y="400" />
+        <rect class="innerBlock" width="40" height="40" x="400" y="400" />
+        <rect class="innerBlock" width="40" height="40" x="480" y="400" />
+        <rect class="innerBlock" width="40" height="40" x="560" y="400" />
+        <rect class="innerBlock" width="40" height="40" x="80" y="480" />
+        <rect class="innerBlock" width="40" height="40" x="160" y="480" />
+        <rect class="innerBlock" width="40" height="40" x="240" y="480" />
+        <rect class="innerBlock" width="40" height="40" x="320" y="480" />
+        <rect class="innerBlock" width="40" height="40" x="400" y="480" />
+        <rect class="innerBlock" width="40" height="40" x="480" y="480" />
+        <rect class="innerBlock" width="40" height="40" x="560" y="480" />
+        <rect class="innerBlock" width="40" height="40" x="80" y="560" />
+        <rect class="innerBlock" width="40" height="40" x="160" y="560" />
+        <rect class="innerBlock" width="40" height="40" x="240" y="560" />
+        <rect class="innerBlock" width="40" height="40" x="320" y="560" />
+        <rect class="innerBlock" width="40" height="40" x="400" y="560" />
+        <rect class="innerBlock" width="40" height="40" x="480" y="560" />
+        <rect class="innerBlock" width="40" height="40" x="560" y="560" />
+      </g>
+      <g id="destructibleGrp"></g>
+      <g id="enemyGrp"></g>
+      <g id="playerGrp"></g>
+    </svg>
+
+    <script type="module">
+      import { game } from "./game.js";
+      game();
+    </script>
+  </body>
+</html>

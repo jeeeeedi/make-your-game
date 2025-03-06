@@ -1,0 +1,23 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.wallAndFloor {
+    fill: white;
+    stroke: gray;
+    stroke-width: 80px;
+}
+
+.innerBlock {
+    fill: gray;
+}
+
+.player {
+    font-size: 40px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
