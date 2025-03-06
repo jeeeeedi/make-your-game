@@ -5,6 +5,8 @@ body {
   height: 100vh;
   background-color: black;
   margin: 0;
+  background: url("map.svg") no-repeat center;
+  background-size: contain;
 }
 
 #game-board {
@@ -63,7 +65,7 @@ body {
 }
 
 .door {
-  font-size: 30px;
+  font-size: 40px;
 }
 
 .explosion {

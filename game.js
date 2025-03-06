@@ -3,7 +3,6 @@ const gameBoard = document.getElementById("game-board");
 const tileSize = 40;
 const gridSize = 17;
 
-// Function to generate a random game map
 function generateMap() {
   let map = Array.from({ length: gridSize }, (_, row) =>
     Array.from({ length: gridSize }, (_, col) => {
@@ -22,7 +21,6 @@ function generateMap() {
     })
   );
 
-  // Ensure the player's starting position is a floor
   map[8][8] = 0;
 
   let numBricks = 40;
@@ -33,32 +31,20 @@ function generateMap() {
     let randRow = Math.floor(Math.random() * (gridSize - 2)) + 1;
     let randCol = Math.floor(Math.random() * (gridSize - 2)) + 1;
 
-    // Prevent bricks from spawning on the player’s start position
     if (map[randRow][randCol] === 0 && !(randRow === 8 && randCol === 8)) {
-      map[randRow][randCol] = 2; // Mark as destructible
+      map[randRow][randCol] = 2;
       brickPositions.push({ row: randRow, col: randCol });
       placed++;
     }
   }
 
-  // Randomly select a brick to hide the door
   let hiddenDoor = brickPositions[Math.floor(Math.random() * brickPositions.length)];
-
-  // Mark the hidden door position in the map
-  map[hiddenDoor.row][hiddenDoor.col] = 3; // 3 represents a destructible brick with a hidden door
+  map[hiddenDoor.row][hiddenDoor.col] = 3;
 
   return { map, hiddenDoor };
 }
-/* 
-const floor = map[row][col] === 0;
-const wall = map[row][col] === 1;
-const destructible = map[row][col] === 2;
-const door = map[row][col] === 3; */
 
 let { map, hiddenDoor } = generateMap();
-
-// Player starts at the center
-let playerPos = { row: 8, col: 8 };
 
 const player = document.createElement("div");
 player.classList.add("player");
@@ -70,27 +56,22 @@ function createMap() {
 
   for (let row = 0; row < gridSize; row++) {
     for (let col = 0; col < gridSize; col++) {
-      const tile = document.createElement("div");
-      tile.classList.add("tile");
-
       if (map[row][col] === 1) {
-        tile.classList.add("wall");
-      } else if (map[row][col] === 2) {
-        tile.classList.add("destructible");
-      } else if (map[row][col] === 3) {
-        tile.classList.add("destructible");
-      } else {
-        tile.classList.add("floor");
+        const wall = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        wall.setAttribute("x", col * tileSize);
+        wall.setAttribute("y", row * tileSize);
+        wall.setAttribute("width", tileSize);
+        wall.setAttribute("height", tileSize);
+        wall.setAttribute("fill", "gray");
+        wall.setAttribute("stroke", "black");
+        gameBoard.appendChild(wall);
       }
-
-      tile.dataset.row = row;
-      tile.dataset.col = col;
-      gameBoard.appendChild(tile);
     }
   }
-
-  gameBoard.appendChild(player); // Ensure player stays on top
 }
+
+createMap();
+
 
 function updatePlayerPosition() {
   player.style.transform = `translate3d(${playerPos.col * tileSize}px, ${
