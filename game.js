@@ -224,6 +224,7 @@ function explode(row, col) {
   });
   // Now, remove explosion after animation is done using requestAnimationFrame
   function clearExplosion(timestamp) {
+    
     // You can ensure that the explosion stays for a certain amount of time (e.g., 500ms)
     if (timestamp - lastFrameTime > 500) {
       const tile = document.querySelector(
@@ -239,7 +240,7 @@ function explode(row, col) {
   }
 
   // Start the animation loop to clear the explosion after 500ms
-  lastFrameTime = performance.now();
+  let lastFrameTime = performance.now();
   requestAnimationFrame(clearExplosion);
 }
 
