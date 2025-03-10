@@ -38,7 +38,12 @@ body {
   background-color: white;
 }
 
-.player, .spook {
+.player, .bomb, .explosion {
+  will-change: transform, opacity; /* will-change property tells the browser which properties of an element are expected to change, allowing it to optimize rendering ahead of time. */
+  transform: translateZ(0); /* Applying translateZ(0) or translate3d(0,0,0) forces the element into a new GPU layer. */
+}
+
+.player {
   position: absolute;
   width: 40px;
   height: 40px;
