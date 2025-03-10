@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Tiny5&display=swap');
+
 body {
   display: flex;
   justify-content: center;
@@ -5,11 +7,37 @@ body {
   height: 100vh;
   background-color: black;
   margin: 0;
+  font-family: "Tiny5", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+header {
+  padding-top: 80px;
+}
+
+h1,
+h2 {
+  text-align: center;
+  color: greenyellow;
+}
+
+.scoreboard {
+  table-layout: auto;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  color: red;
+}
+
+.scoreboard td {
+  width: 33%;
 }
 
 #game-board {
   display: grid;
-  grid-template-columns: repeat(17, 40px); /* 17x17 Grid */
+  grid-template-columns: repeat(17, 40px);
+  /* 17x17 Grid */
   grid-template-rows: repeat(17, 40px);
   background-color: white;
 }
@@ -38,9 +66,13 @@ body {
   background-color: white;
 }
 
-.player, .bomb, .explosion {
-  will-change: transform, opacity; /* will-change property tells the browser which properties of an element are expected to change, allowing it to optimize rendering ahead of time. */
-  transform: translateZ(0); /* Applying translateZ(0) or translate3d(0,0,0) forces the element into a new GPU layer. */
+.player,
+.bomb,
+.explosion {
+  will-change: transform, opacity;
+  /* will-change property tells the browser which properties of an element are expected to change, allowing it to optimize rendering ahead of time. */
+  transform: translateZ(0);
+  /* Applying translateZ(0) or translate3d(0,0,0) forces the element into a new GPU layer. */
 }
 
 .player {
@@ -62,6 +94,7 @@ body {
   0% {
     opacity: 1;
   }
+
   100% {
     opacity: 0.6;
   }
@@ -72,7 +105,8 @@ body {
 }
 
 .explosion {
-  font-size: 80px; /* Explosion emoji size */
+  font-size: 80px;
+  /* Explosion emoji size */
   animation: explode 0.3s ease-out forwards;
   display: flex;
   align-items: center;
@@ -82,15 +116,47 @@ body {
 
 @keyframes explode {
   0% {
-    transform: scale(1); /* Start at normal size */
+    transform: scale(1);
+    /* Start at normal size */
     opacity: 1;
   }
+
   50% {
-    transform: scale(1.5); /* Enlarge the explosion */
+    transform: scale(1.5);
+    /* Enlarge the explosion */
     opacity: 0.8;
   }
+
   100% {
-    transform: scale(1); /* Return to normal size */
-    opacity: 0; /* Fade out the explosion */
+    transform: scale(1);
+    /* Return to normal size */
+    opacity: 0;
+    /* Fade out the explosion */
   }
+}
+
+footer {
+  padding-bottom: 20px;
+  text-align: center;
+  color: gray;
+}
+
+.instructions th {
+  text-align: justify;
+  padding-right: 20px;
+  width: auto;
+  font-size: 1.5rem;
+  color: greenyellow;
+}
+
+.instructions td {
+  text-align: justify;
+  padding-right: 20px;
+  width: auto;
+  font-size: 1.1rem;
+  color: greenyellow;
+}
+
+footer a {
+  color: gray;
 }

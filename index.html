@@ -1,13 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bomberman Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div id="game-board"></div>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>BOMBERMAN</h1>
+            <table class="scoreboard">
+                <tr>
+                    <th>Lives</th>
+                    <th>Time Left</th>
+                    <th>XP</th>
+                </tr>
+                <tr>
+                    <td id="lives">❤️❤️❤️❤️❤️</td>
+                    <td id="time">00:00</td>
+                    <td id="xp">12</td>
+                </tr>
+            </table>
+        </header>
+        <!-- Game Board -->
+        <div class="content">
+            <div id="game-board"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <h2>Controls</h2>
+            <table class="instructions">
+                <tr>
+                    <th>Key</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>x</td>
+                    <td>drops a bomb on the current tile</td>
+                </tr>
+                <tr>
+                    <td>left, right, up, down</td>
+                    <td>moves the player left, right, up, or down, respectively</td>
+                </tr>
+                <tr>
+                    <td>space</td>
+                    <td>pauses the game or continues a paused game</td>
+                </tr>
+                <tr>
+                    <td>esc</td>
+                    <td>quits the current game and starts a new game</td>
+                </tr>
+            </table>
+            <p>Bomberman by <a href="https://www.linkedin.com/in/anastasia-suhareva-09599651/">Anastasia</a> and <a href="https://github.com/jeeeeedi">Jedi</a></p>
+        </footer>
+    </div>
     <script src="game.js"></script>
 </body>
+
 </html>
