@@ -1,7 +1,9 @@
-const gameBoard = document.getElementById("game-board");
+import { callTheSpooks } from "./spooks.js";
 
-const tileSize = 40;
-const gridSize = 17;
+export const gameBoard = document.getElementById("game-board");
+
+export const tileSize = 40;
+export const gridSize = 17;
 
 // Function to generate a random game map
 function generateMap() {
@@ -55,7 +57,7 @@ const wall = map[row][col] === 1;
 const destructible = map[row][col] === 2;
 const door = map[row][col] === 3; */
 
-let { map, hiddenDoor } = generateMap();
+export let { map, hiddenDoor } = generateMap();
 
 // Player starts at the center
 let playerPos = { row: 8, col: 8 };
@@ -146,6 +148,10 @@ document.addEventListener("keydown", (e) => {
 
 createMap();
 updatePlayerPosition();
+
+ // Change 3 to any number of spooks you want
+  callTheSpooks(gameBoard);
+
 
 let bombs = [];
 let lastBombPlacedTime = 0; // Track the time bomb was placed
