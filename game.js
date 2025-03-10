@@ -36,7 +36,7 @@ function generateMap() {
   let hiddenDoor = brickPositions[Math.floor(Math.random() * brickPositions.length)];
   map[hiddenDoor.row][hiddenDoor.col] = 3;
 
-  return { map, hiddenDoor };
+    return { map, hiddenDoor: hiddenBrick };
 }
 
 let { map, hiddenDoor } = generateMap();

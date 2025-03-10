@@ -73,8 +73,10 @@ body {
   animation: explode 0.3s ease-out forwards;
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 1;
+  line-height: 40px; /* Center the emoji */
+  position: absolute;
+  transition: 0.1s; /* Smooth movement */
+  /* background-color: blue; */
 }
 
 @keyframes explode {
