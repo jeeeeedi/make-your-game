@@ -101,3 +101,12 @@ body {
   height: 40px;
   font-size: 32px;
 }
+
+.energy-counter {
+  position: absolute;
+  top: 10px; /* Position it near the top of the screen */
+  left: 10px; /* Position it on the left */
+  font-size: 24px; /* Make the font large */
+  color: red; /* Make the text red for emphasis */
+  font-family: Arial, sans-serif;
+}

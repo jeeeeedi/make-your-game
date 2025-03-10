@@ -1,4 +1,4 @@
-import { map, tileSize, gridSize } from './game.js';
+import { map, tileSize, gridSize, playerPos, isAtSamePosition, decreaseEnergy} from './game.js';
 
 export function callTheSpooks(gameBoard) {
     let spookCount = 0;
@@ -33,16 +33,16 @@ export function callTheSpooks(gameBoard) {
 
     }, 7000);
 }
-
+export let newRow, newCol;
 function moveSpook(spook, row, col) {
     let lastMoveTime = performance.now();
     function animate(time) {
-        if (time - lastMoveTime < 1000) {  // Move every 1000ms (1 second)
+        if (time - lastMoveTime < 1000) { 
             requestAnimationFrame(animate);
             return;
         }
     lastMoveTime = time;    
-    let newCol= col, newRow = row;
+    newCol= col, newRow = row;
     const directions = ['up', 'down', 'left', 'right'];
 
     let moved = false;
@@ -62,10 +62,15 @@ function moveSpook(spook, row, col) {
         && newCol >= 0 && newCol < gridSize 
         && map[newRow][newCol] === 0) {
         spook.style.transform = `translate3d(${newCol * tileSize}px, ${newRow * tileSize}px, 0)`;
+
+        if (isAtSamePosition(playerPos, {row: newRow, col: newCol})) {
+            decreaseEnergy();
+        }
         row = newRow;
         col = newCol;
         moved = true;
             }
+        
         }
         requestAnimationFrame(animate);
     }

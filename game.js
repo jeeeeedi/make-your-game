@@ -1,4 +1,4 @@
-import { callTheSpooks } from "./spooks.js";
+import { callTheSpooks, newRow, newCol } from "./spooks.js";
 
 export const gameBoard = document.getElementById("game-board");
 
@@ -60,7 +60,7 @@ const door = map[row][col] === 3; */
 export let { map, hiddenDoor } = generateMap();
 
 // Player starts at the center
-let playerPos = { row: 8, col: 8 };
+export let playerPos = { row: 8, col: 8 };
 
 const player = document.createElement("div");
 player.classList.add("player");
@@ -93,6 +93,32 @@ function createMap() {
 
   gameBoard.appendChild(player); // Ensure player stays on top
 }
+
+let playerEnergy = 3;
+const energyCounter = document.createElement('div');
+energyCounter.classList.add('Energy-counter');
+energyCounter.textContent = `Energy: ${playerEnergy}`;
+document.body.appendChild(energyCounter);
+
+export function decreaseEnergy() {
+  if (playerEnergy > 0) {
+      playerEnergy--;
+      updateEnergyCounter(); // Update the counter after losing a energy
+  } else {
+      alert('Game Over!');
+  }
+}
+export function isAtSamePosition(playerPos, spookPos = {newRow, newCol}) {
+  return playerPos.row === spookPos.row && playerPos.col === spookPos.col;
+}
+
+function checkCollisionWithSpook() {
+  if (isAtSamePosition(playerPos, spookPos)) {
+      decreaseEnergy(); // Call the function to reduce energy
+  }
+}
+
+
 
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
