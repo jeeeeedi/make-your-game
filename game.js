@@ -4,39 +4,34 @@ const tileSize = 40;
 const gridSize = 17;
 
 function generateMap() {
-  let map = Array.from({ length: gridSize }, (_, row) =>
-    Array.from({ length: gridSize }, (_, col) => {
-      if (
-        row === 0 ||
-        col === 0 ||
-        row === gridSize - 1 ||
-        col === gridSize - 1
-      ) {
-        return 1; // Border walls
-      }
-      if (row % 2 === 0 && col % 2 === 0) {
-        return 1; // Fixed walls
-      }
-      return 0; // Default floor
-    })
-  );
+    let map = Array.from({ length: gridSize }, (_, row) =>
+        Array.from({ length: gridSize }, (_, col) => {
+            if (row === 0 || col === 0 || row === gridSize - 1 || col === gridSize - 1) {
+                return 1; // Border walls
+            }
+            if (row % 2 === 0 && col % 2 === 0) {
+                return 1; // Fixed walls
+            }
+            return 0; // Default floor
+        })
+    );
 
-  map[8][8] = 0;
+      map[8][8] = 0;
 
-  let numBricks = 40;
-  let brickPositions = [];
-  let placed = 0;
+    let numBricks = 40;
+    let brickPositions = [];
+    let placed = 0;
 
-  while (placed < numBricks) {
-    let randRow = Math.floor(Math.random() * (gridSize - 2)) + 1;
-    let randCol = Math.floor(Math.random() * (gridSize - 2)) + 1;
+    while (placed < numBricks) {
+        let randRow = Math.floor(Math.random() * (gridSize - 2)) + 1;
+        let randCol = Math.floor(Math.random() * (gridSize - 2)) + 1;
 
-    if (map[randRow][randCol] === 0 && !(randRow === 8 && randCol === 8)) {
-      map[randRow][randCol] = 2;
-      brickPositions.push({ row: randRow, col: randCol });
-      placed++;
+            if (map[randRow][randCol] === 0 && !(randRow === 8 && randCol === 8)) {
+            map[randRow][randCol] = 2;
+            brickPositions.push({ row: randRow, col: randCol });
+            placed++;
+        }
     }
-  }
 
   let hiddenDoor = brickPositions[Math.floor(Math.random() * brickPositions.length)];
   map[hiddenDoor.row][hiddenDoor.col] = 3;
@@ -46,37 +41,39 @@ function generateMap() {
 
 let { map, hiddenDoor } = generateMap();
 
+
 const player = document.createElement("div");
 player.classList.add("player");
-player.textContent = "😇";
+player.innerText = "😇";
 gameBoard.appendChild(player);
 
 function createMap() {
-  gameBoard.textContent = "";
+    gameBoard.innerHTML = "";
+    
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            const tile = document.createElement("div");
+            tile.classList.add("tile");
 
-  for (let row = 0; row < gridSize; row++) {
-    for (let col = 0; col < gridSize; col++) {
-      if (map[row][col] === 1) {
-        const wall = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        wall.setAttribute("x", col * tileSize);
-        wall.setAttribute("y", row * tileSize);
-        wall.setAttribute("width", tileSize);
-        wall.setAttribute("height", tileSize);
-        wall.setAttribute("fill", "gray");
-        wall.setAttribute("stroke", "black");
-        gameBoard.appendChild(wall);
-      }
+            if (map[row][col] === 1) {
+                tile.classList.add("wall");
+            } else if (map[row][col] === 2) {
+                tile.classList.add("destructible");
+            } else {
+                tile.classList.add("floor");
+            }
+            
+            tile.dataset.row = row;
+            tile.dataset.col = col;
+            gameBoard.appendChild(tile);
+        }
     }
-  }
+    
+    gameBoard.appendChild(player); // Ensure player stays on top
 }
 
-createMap();
-
-
 function updatePlayerPosition() {
-  player.style.transform = `translate3d(${playerPos.col * tileSize}px, ${
-    playerPos.row * tileSize
-  }px, 0)`;
+    player.style.transform = `translate3d(${playerPos.col * tileSize}px, ${playerPos.row * tileSize}px, 0)`;
 }
 
 function destroyBrick(row, col) {
@@ -105,82 +102,58 @@ function destroyBrick(row, col) {
   }
 }
 
+
+
 document.addEventListener("keydown", (e) => {
-  let newRow = playerPos.row;
-  let newCol = playerPos.col;
+    let newRow = playerPos.row;
+    let newCol = playerPos.col;
 
-  if (e.key === "ArrowUp") newRow--;
-  if (e.key === "ArrowDown") newRow++;
-  if (e.key === "ArrowLeft") newCol--;
-  if (e.key === "ArrowRight") newCol++;
+    if (e.key === "ArrowUp") newRow--;
+    if (e.key === "ArrowDown") newRow++;
+    if (e.key === "ArrowLeft") newCol--;
+    if (e.key === "ArrowRight") newCol++;
 
-  if (map[newRow][newCol] === 0) {
-    playerPos.row = newRow;
-    playerPos.col = newCol;
-    updatePlayerPosition();
-  }
+    if (map[newRow][newCol] === 0) {
+        playerPos.row = newRow;
+        playerPos.col = newCol;
+        updatePlayerPosition();
+    }
 
-  if (e.key === "x") {
-    placeBomb(playerPos.row, playerPos.col);
-  }
+    if (e.key === "x") {
+        placeBomb(playerPos.row, playerPos.col);
+    }
 });
 
 createMap();
 updatePlayerPosition();
 
 let bombs = [];
-let lastBombPlacedTime = 0; // Track the time bomb was placed
 
 function placeBomb(row, col) {
-  // Only place bombs on empty tiles (this includes destroyed bricks and floors)
-  if (map[row][col] !== 0) return; // Skip if not a floor tile (0)
+    if (map[row][col] !== 0) return; // Only place bombs on empty tiles
 
-  const tile = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-  if (!tile) return;
+    const tile = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+    if (!tile) return;
 
-  tile.classList.add("bomb");
-  tile.style.opacity = "100%";
-  tile.textContent = "💣"; // Set bomb emoji on the tile
+    tile.textContent = "💣"; // Set bomb emoji on the tile
 
-  // Store the bomb's placement time
-  bombs.push({ row, col, placedAt: performance.now() });
+    // Trigger explosion after 2 seconds
+    setTimeout(() => explodeBomb(row, col), 2000);
 }
 
-function explodeBomb() {
-  const currentTime = performance.now();
-  const explosionTimeLimit = 1000; // Bomb explodes after 1 second
+function explodeBomb(row, col) {
+    const explosionTiles = [
+        { row, col }, // Center
+        { row: row - 1, col }, // Up
+        { row: row + 1, col }, // Down
+        { row, col: col - 1 }, // Left
+        { row, col: col + 1 }  // Right
+    ];
 
-  bombs = bombs.filter((bomb) => {
-    if (currentTime - bomb.placedAt >= explosionTimeLimit) {
-      explode(bomb.row, bomb.col);
-      return false; // Remove the bomb from the list after explosion
-    }
-    return true; // Keep bombs that haven't exploded yet
-  });
-}
-
-function explode(row, col) {
-  const explosionTiles = [
-    { row, col }, // Center
-    { row: row - 1, col }, // Up
-    { row: row + 1, col }, // Down
-    { row, col: col - 1 }, // Left
-    { row, col: col + 1 }, // Right
-  ];
-
-  const tile = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-  if (tile) {
-    tile.textContent = "💥"; // Show explosion emoji at bomb's location
-    tile.classList.add("explosion");
-  }
-
-  // Handle surrounding destructible bricks
-  explosionTiles.forEach(({ row, col }) => {
-    if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
-      const tile = document.querySelector(
-        `[data-row="${row}"][data-col="${col}"]`
-      );
-      if (!tile) return;
+    explosionTiles.forEach(({ row, col }) => {
+        if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
+            const tile = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            if (!tile) return;
 
       // Only destroy destructible tiles (not permanent walls)
       if (map[row][col] === 2) {
@@ -224,6 +197,3 @@ function gameLoop() {
   // Continuously request the next frame
   requestAnimationFrame(gameLoop);
 }
-
-// Start the game loop
-requestAnimationFrame(gameLoop);

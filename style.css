@@ -18,6 +18,7 @@ body {
 
 .tile {
   width: 40px;
+  border: 1px solid rgb(213, 213, 213);
   height: 40px;
   display: flex;
   align-items: center;
@@ -40,13 +41,12 @@ body {
   background-color: white;
 }
 
-.player {
-  position: absolute;
+.player, .door, .bomb, .boom {
   width: 40px;
   height: 40px;
-  font-size: 30px;
-  display: flex;
-  align-items: center;
+  font-size: 36px; /* Make the emoji big */
+  padding-left: 2px;
+  padding-top: 2px;
   justify-content: center;
 }
 
