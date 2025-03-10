@@ -5,8 +5,6 @@ body {
   height: 100vh;
   background-color: black;
   margin: 0;
-  background: url("map.svg") no-repeat center;
-  background-size: contain;
 }
 
 #game-board {
@@ -18,8 +16,12 @@ body {
 
 .tile {
   width: 40px;
-  border: 1px solid rgb(213, 213, 213);
   height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* border: 1px solid rgb(224, 224, 224); border looks weird after explosion */
 }
 
 .wall {
@@ -36,16 +38,54 @@ body {
   background-color: white;
 }
 
-.player, .door, .bomb, .boom {
+.player {
+  position: absolute;
   width: 40px;
   height: 40px;
-  font-size: 36px; /* Make the emoji big */
-  padding-left: 2px;
-  padding-top: 2px;
-  justify-content: center;
+  font-size: 30px;
+  display: flex;
   align-items: center;
-  line-height: 40px; /* Center the emoji */
-  position: absolute;
-  transition: 0.1s; /* Smooth movement */
-  /* background-color: blue; */
+  justify-content: center;
+}
+
+.bomb {
+  font-size: 30px;
+  animation: bombBlink 0.15s infinite alternate;
+}
+
+@keyframes bombBlink {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.door {
+  font-size: 30px;
+}
+
+.explosion {
+  font-size: 80px; /* Explosion emoji size */
+  animation: explode 0.3s ease-out forwards;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+@keyframes explode {
+  0% {
+    transform: scale(1); /* Start at normal size */
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5); /* Enlarge the explosion */
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1); /* Return to normal size */
+    opacity: 0; /* Fade out the explosion */
+  }
 }
