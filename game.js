@@ -1,7 +1,9 @@
-const gameBoard = document.getElementById("game-board");
+import { callTheSpooks, newRow, newCol } from "./spooks.js";
 
-const tileSize = 40;
-const gridSize = 17;
+export const gameBoard = document.getElementById("game-board");
+
+export const tileSize = 40;
+export const gridSize = 17;
 
 // Function to generate a random game map
 function generateMap() {
@@ -55,10 +57,10 @@ const wall = map[row][col] === 1;
 const destructible = map[row][col] === 2;
 const door = map[row][col] === 3; */
 
-let { map, hiddenDoor } = generateMap();
+export let { map, hiddenDoor } = generateMap();
 
 // Player starts at the center
-let playerPos = { row: 8, col: 8 };
+export let playerPos = { row: 8, col: 8 };
 
 const player = document.createElement("div");
 player.classList.add("player");
@@ -91,6 +93,32 @@ function createMap() {
 
   gameBoard.appendChild(player); // Ensure player stays on top
 }
+
+let playerEnergy = 3;
+const energyCounter = document.createElement('div');
+energyCounter.classList.add('Energy-counter');
+energyCounter.textContent = `Energy: ${playerEnergy}`;
+document.body.appendChild(energyCounter);
+
+export function decreaseEnergy() {
+  if (playerEnergy > 0) {
+      playerEnergy--;
+      updateEnergyCounter(); // Update the counter after losing a energy
+  } else {
+      alert('Game Over!');
+  }
+}
+export function isAtSamePosition(playerPos, spookPos = {newRow, newCol}) {
+  return playerPos.row === spookPos.row && playerPos.col === spookPos.col;
+}
+
+function checkCollisionWithSpook() {
+  if (isAtSamePosition(playerPos, spookPos)) {
+      decreaseEnergy(); // Call the function to reduce energy
+  }
+}
+
+
 
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
@@ -147,6 +175,10 @@ document.addEventListener("keydown", (e) => {
 
 createMap();
 updatePlayerPosition();
+
+ // Change 3 to any number of spooks you want
+  callTheSpooks(gameBoard);
+
 
 let bombs = [];
 let lastBombPlacedTime = 0; // Track the time bomb was placed
@@ -218,6 +250,7 @@ function explode(row, col) {
   });
   // Now, remove explosion after animation is done using requestAnimationFrame
   function clearExplosion(timestamp) {
+    
     // You can ensure that the explosion stays for a certain amount of time (e.g., 500ms)
     if (timestamp - lastFrameTime > 500) {
       const tile = document.querySelector(
@@ -233,7 +266,7 @@ function explode(row, col) {
   }
 
   // Start the animation loop to clear the explosion after 500ms
-  lastFrameTime = performance.now();
+  let lastFrameTime = performance.now();
   requestAnimationFrame(clearExplosion);
 }
 
