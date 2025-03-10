@@ -16,7 +16,8 @@ function generateMap() {
         })
     );
 
-      map[8][8] = 0;
+    // Ensure the player's starting position is a floor
+    map[8][8] = 0;
 
     let numBricks = 40;
     let brickPositions = [];
@@ -26,21 +27,29 @@ function generateMap() {
         let randRow = Math.floor(Math.random() * (gridSize - 2)) + 1;
         let randCol = Math.floor(Math.random() * (gridSize - 2)) + 1;
 
-            if (map[randRow][randCol] === 0 && !(randRow === 8 && randCol === 8)) {
-            map[randRow][randCol] = 2;
+        // Prevent bricks from spawning on the player’s start position
+        if (map[randRow][randCol] === 0 && !(randRow === 8 && randCol === 8)) {
+            map[randRow][randCol] = 2; // Mark as destructible
             brickPositions.push({ row: randRow, col: randCol });
             placed++;
         }
     }
 
-  let hiddenDoor = brickPositions[Math.floor(Math.random() * brickPositions.length)];
-  map[hiddenDoor.row][hiddenDoor.col] = 3;
+    // Randomly select a brick to hide the door
+    let hiddenBrick = brickPositions[Math.floor(Math.random() * brickPositions.length)];
+
+    // Print the door position as a hint
+    console.log(`Hint: The door is hidden at row ${hiddenBrick.row}, col ${hiddenBrick.col}`);
 
     return { map, hiddenDoor: hiddenBrick };
 }
 
+
 let { map, hiddenDoor } = generateMap();
 
+
+// Player starts at the center
+let playerPos = { row: 8, col: 8 };
 
 const player = document.createElement("div");
 player.classList.add("player");
@@ -77,29 +86,20 @@ function updatePlayerPosition() {
 }
 
 function destroyBrick(row, col) {
-  if (map[row][col] === 2 || map[row][col] === 3) {
-    const tile = document.querySelector(
-      `[data-row="${row}"][data-col="${col}"]`
-    );
-    if (!tile) return;
+    if (map[row][col] === 2) {
+        map[row][col] = 0; // Change brick to floor
 
-    tile.style.opacity = "0.3"; // Fade effect for destructible tile
+        const tile = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+        tile.style.opacity = "100"; // Fade effect
 
-    // If this was the hidden door, show it after destruction
-    if (map[row][col] === 3) {
-      tile.classList.remove("destructible"); // Remove the destructible class
-      tile.classList.add("door");
-      tile.textContent = "🚪"; // Show door emoji
-      tile.style.opacity = "100%"; // Ensure door is fully visible
-    } else {
-      tile.classList.remove("destructible"); // Remove the destructible class
-      tile.classList.add("floor"); // Ensure it stays a floor
-      tile.textContent = ""; // Remove any content from the tile
-      tile.style.opacity = "100%"; // Ensure full visibility after destruction
+        // If this was the hidden door, show it after fade animation
+        if (row === hiddenDoor.row && col === hiddenDoor.col) {
+            setTimeout(() => {
+                tile.innerText = "🚪"; // Show door
+                tile.style.opacity = "100"; // Restore opacity
+            }, 500);
+        }
     }
-
-    map[row][col] = 0; // Change brick to floor
-  }
 }
 
 
@@ -155,45 +155,19 @@ function explodeBomb(row, col) {
             const tile = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
             if (!tile) return;
 
-      // Only destroy destructible tiles (not permanent walls)
-      if (map[row][col] === 2) {
-        tile.style.opacity = "0"; // Fade destructible bricks
-        map[row][col] = 0; // Mark it as destroyed
-        tile.classList.remove("destructible");
-        tile.classList.add("floor"); // Keep it as a floor tile
-      } else if (map[row][col] === 3) {
-        // If the hidden door is destroyed, reveal it
-        tile.textContent = "🚪"; // Show door emoji
-        tile.classList.remove("destructible");
-        tile.classList.add("door"); // Keep it as a door tile
-      }
-    }
-  });
-  // Now, remove explosion after animation is done using requestAnimationFrame
-  function clearExplosion(timestamp) {
-    // You can ensure that the explosion stays for a certain amount of time (e.g., 500ms)
-    if (timestamp - lastFrameTime > 500) {
-      const tile = document.querySelector(
-        `[data-row="${row}"][data-col="${col}"]`
-      );
-      if (tile) {
-        tile.innerText = ""; // Clear explosion emoji
-        tile.classList.remove("explosion"); // Remove the explosion class
-      }
-    } else {
-      requestAnimationFrame(clearExplosion); // Continue until the explosion is done
-    }
-  }
+            tile.textContent = "💥"; // Set explosion emoji
 
-  // Start the animation loop to clear the explosion after 500ms
-  lastFrameTime = performance.now();
-  requestAnimationFrame(clearExplosion);
-}
+            // Handle destructible bricks
+            if (map[row][col] === 2) {
+                tile.style.opacity = "0.3"; // Fade destructible bricks
+                map[row][col] = 0; // Mark it as destroyed in the map
+            }
 
-function gameLoop() {
-  // Call explodeBomb to check if any bombs need to explode
-  explodeBomb();
-
-  // Continuously request the next frame
-  requestAnimationFrame(gameLoop);
+            setTimeout(() => {
+                if (tile.textContent === "💥") {
+                    tile.textContent = ""; // Clear explosion after 0.5s
+                }
+            }, 500);
+        }
+    });
 }
