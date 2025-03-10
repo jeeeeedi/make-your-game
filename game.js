@@ -92,6 +92,7 @@ function createMap() {
   gameBoard.appendChild(player); // Ensure player stays on top
 }
 
+// Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
   player.style.transform = `translate3d(${playerPos.col * tileSize}px, ${
     playerPos.row * tileSize
@@ -106,7 +107,7 @@ function destroyBrick(row, col) {
     if (!tile) return;
 
     tile.style.opacity = "0.3"; // Fade effect for destructible tile
-
+    
     // If this was the hidden door, show it after destruction
     if (map[row][col] === 3) {
       tile.classList.remove("destructible"); // Remove the destructible class
@@ -223,8 +224,8 @@ function explode(row, col) {
         `[data-row="${row}"][data-col="${col}"]`
       );
       if (tile) {
-        tile.innerText = ""; // Clear explosion emoji
-        tile.classList.remove("explosion"); // Remove the explosion class
+        tile.textContent = ""; // Clear explosion emoji
+        tile.classList.remove("bomb", "explosion"); // Remove bomb and explosion classes to remove the layer tile.floor.bomb
       }
     } else {
       requestAnimationFrame(clearExplosion); // Continue until the explosion is done
@@ -246,3 +247,5 @@ function gameLoop() {
 
 // Start the game loop
 requestAnimationFrame(gameLoop);
+
+
