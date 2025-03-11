@@ -1,4 +1,6 @@
-let timeLeft = 60000; // 2 minutes in milliseconds
+import { enoughIsEnough } from "./stopGame.js";
+
+let timeLeft = 60000; // 1 minutes in milliseconds
 let lastTime = null;
 let timerRunning = false;
 
@@ -40,4 +42,3 @@ export function resumeTimer() {
     timerRunning = true;
     requestAnimationFrame(timer);
   }
-}

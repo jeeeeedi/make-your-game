@@ -1,13 +1,16 @@
-import { map, tileSize, gridSize, playerPos, isAtSamePosition, decreaseEnergy} from './game.js';
+import { map, tileSize, gridSize } from './game.js';
+import { checkSpookyHug } from './lives.js'
+
+export let spooks = [];
+export let spawnInterval;
 
 export function callTheSpooks(gameBoard) {
-    let spookCount = 0;
     
     function spawnSpook() {
-        if(spookCount >= 6) return;
+        if(spooks.length >= 6) return;
 
         let row, col;
-        do{
+        do {
             row = Math.floor(Math.random() * gridSize);
             col = Math.floor(Math.random() * gridSize);
         } while (map[row][col] !== 0 || (row === 8 && col === 8));
@@ -18,61 +21,67 @@ export function callTheSpooks(gameBoard) {
         spook.style.transform = `translate3d(${col * tileSize}px, ${row * tileSize}px, 0)`;
 
         gameBoard.appendChild(spook);
-        moveSpook(spook, row, col);
 
-        spookCount++;
+        spooks.push({element: spook, position: {row, col}});
     }
-    spawnSpook();
 
-    const spawnInterval = setInterval(() =>{
-        if (spookCount >= 6) {
+    spawnSpook(); // first spook appears without any delay. 
+
+    spawnInterval = setInterval(() =>{
+        if (spooks.length >= 6) {
             clearInterval(spawnInterval);
             return;
         }
         spawnSpook();
-
     }, 7000);
+
+    startMovingSpooks();
 }
-export let newRow, newCol;
-function moveSpook(spook, row, col) {
+
+function startMovingSpooks() {
     let lastMoveTime = performance.now();
-    function animate(time) {
-        if (time - lastMoveTime < 1000) { 
-            requestAnimationFrame(animate);
+
+    function update(time) {
+        if (time - lastMoveTime < 1000) {
+            requestAnimationFrame(update);
             return;
         }
-    lastMoveTime = time;    
-    newCol= col, newRow = row;
-    const directions = ['up', 'down', 'left', 'right'];
+        lastMoveTime = time;
+        moveSpooks();
 
-    let moved = false;
+        requestAnimationFrame(update); // update all spooks
+    }
+    requestAnimationFrame(update); // start loop
+}
 
-    while (!moved) {
+function moveSpooks() {
+    spooks.forEach(spookObj => {
+        let spook = spookObj.element;
+        let position = spookObj.position;
+
+
+        const directions = ['up', 'down', 'left', 'right'];
+
         const direction = directions[Math.floor(Math.random() * directions.length)];
-        newRow = row;
-        newCol = col;
 
-    switch (direction) {
-        case 'up': newRow--; break;
-        case 'down': newRow++; break;
-        case 'left': newCol--; break;
-        case 'right': newCol++; break;
-    }
-    if (newRow >= 0 && newRow < gridSize 
-        && newCol >= 0 && newCol < gridSize 
-        && map[newRow][newCol] === 0) {
-        spook.style.transform = `translate3d(${newCol * tileSize}px, ${newRow * tileSize}px, 0)`;
+        let newRow = position.row;
+        let newCol = position.col;
 
-        if (isAtSamePosition(playerPos, {row: newRow, col: newCol})) {
-            decreaseEnergy();
+        switch (direction) {
+            case 'up': newRow--; break;
+            case 'down': newRow++; break;
+            case 'left': newCol--; break;
+            case 'right': newCol++; break;
         }
-        row = newRow;
-        col = newCol;
-        moved = true;
-            }
-        
+        if (newRow >= 0 && newRow < gridSize 
+            && newCol >= 0 && newCol < gridSize 
+            && map[newRow][newCol] === 0) {
+            spook.style.transform = `translate3d(${newCol * tileSize}px, ${newRow * tileSize}px, 0)`;
+
+            checkSpookyHug();
+            
+            position.row = newRow;
+            position.col = newCol;
         }
-        requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
+    });
 }

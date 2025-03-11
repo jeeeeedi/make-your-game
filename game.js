@@ -1,5 +1,8 @@
-import { callTheSpooks, newRow, newCol } from "./spooks.js";
 import { timer, pauseTimer, resumeTimer } from "./timer.js";
+import { callTheSpooks } from "./spooks.js";
+import { checkSpookyHug } from "./lives.js"
+import { enoughIsEnough } from "./stopGame.js";
+
 
 export const gameBoard = document.getElementById("game-board");
 let gameStarted = false;
@@ -68,7 +71,7 @@ const listenForKeydown = document.addEventListener("keydown", (e) => {
 });
 
 // Handle movement and actions only if the game is running
-function handleGameControls(e) {
+export function handleGameControls(e) {
   let newRow = playerPos.row;
   let newCol = playerPos.col;
 
@@ -95,6 +98,7 @@ function handleGameControls(e) {
 
 export const tileSize = 40;
 export const gridSize = 17;
+export let gameLoopFrame
 
 // Function to generate a random game map object
 function generateMap() {
@@ -186,6 +190,7 @@ function createMap() {
   gameBoard.appendChild(player); // Ensure player stays on top
 }
 
+
 createMap();
 
 let playerEnergy = 3;
@@ -212,6 +217,7 @@ function checkCollisionWithSpook() {
   }
 }
 
+
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
   player.style.transform = `translate3d(${playerPos.col * tileSize}px, ${
@@ -219,10 +225,12 @@ function updatePlayerPosition() {
   }px, 0)`;
 }
 
+
 updatePlayerPosition();
 
 // Change 3 to any number of spooks you want
 callTheSpooks(gameBoard);
+export let spookyHugInterval = setInterval(checkSpookyHug, 500);
 
 let bombs = [];
 let lastBombPlacedTime = 0; // Track the time bomb was placed
@@ -320,11 +328,11 @@ function gameLoop() {
   explodeBomb();
 
   // Continuously request the next frame
-  requestAnimationFrame(gameLoop);
+  gameLoopFrame = requestAnimationFrame(gameLoop);
 }
 
 // Start the game loop
-requestAnimationFrame(gameLoop);
+gameLoopFrame = requestAnimationFrame(gameLoop);
 
 function winGame() {
   document.getElementById("status").textContent =
