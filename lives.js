@@ -1,5 +1,6 @@
 import { playerPos } from './game.js'; 
 import { spooks } from './spooks.js';
+import { stopTimer } from './timer.js';
 
 let playerLives = 5;
 const livesCounter = document.getElementById('lives');
@@ -8,14 +9,16 @@ export function decreaseLives() {
   if (playerLives > 0) {
       playerLives--;
       updateLivesCounter(); // Update the counter after losing a energy
-  } else {
-      alert('Game Over!');
+  } 
+  if (playerLives === 0) {
+      stopTimer();
+      enoughIsEnough();
   }
 }
 
 export function updateLivesCounter() {
   livesCounter.textContent = `Lives: ${playerLives}`;
-  document.getElementById('lives').textContent > 0 ? '❤️'.repeat(playerLives) : '🫶🏼';
+  document.getElementById('lives').textContent  = playerLives > 0 ? '❤️'.repeat(playerLives) : '🫶🏼';
 }
 
 export function isAtSamePosition(playerPos, spookPos) {
@@ -27,4 +30,9 @@ export function checkSpookyHug() {
           decreaseLives();
       }
   });
+}
+
+export function enoughIsEnough() {
+  alert("Game over! Do you want to try once again?");
+  location.reload();
 }

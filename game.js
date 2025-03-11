@@ -1,5 +1,6 @@
 import { callTheSpooks } from "./spooks.js";
 import { checkSpookyHug } from "./lives.js"
+import { startTimer } from "./timer.js";
 
 export const gameBoard = document.getElementById("game-board");
 
@@ -151,6 +152,7 @@ document.addEventListener("keydown", (e) => {
 
 createMap();
 updatePlayerPosition();
+startTimer();
 callTheSpooks(gameBoard);
 setInterval(checkSpookyHug, 500);
 
