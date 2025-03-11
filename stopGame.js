@@ -2,8 +2,14 @@ import { handleKeyPress , gameLoopFrame, spookyHugInterval } from './game.js'
 import { spawnInterval, spooks } from './spooks.js'
 import { timerInterval } from './timer.js';
 
+
+let gameOver = false;
 // Stop the game by clearing intervals and stopping the loop
 export function enoughIsEnough() {
+    if (gameOver) return;
+
+    gameOver = true;
+    
     if (spawnInterval) {
         clearInterval(spawnInterval);
         console.log("Spook spawn interval cleared")
