@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Tiny5&display=swap');
+
+
 body {
   display: flex;
   justify-content: center;
@@ -5,6 +8,30 @@ body {
   height: 100vh;
   background-color: black;
   margin: 0;
+  font-family: "Tiny5", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+header {
+  padding-top: 80px;
+}
+
+h1,
+h2 {
+  text-align: center;
+  color: greenyellow;
+}
+
+.scoreboard {
+  table-layout: auto;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  color: red;
+}
+
+.scoreboard td {
+  width: 33%;
 }
 
 #game-board {
@@ -109,4 +136,30 @@ body {
   font-size: 24px; /* Make the font large */
   color: red; /* Make the text red for emphasis */
   font-family: Arial, sans-serif;
+}
+
+footer {
+  padding-bottom: 20px;
+  text-align: center;
+  color: gray;
+}
+
+.instructions th {
+  text-align: justify;
+  padding-right: 20px;
+  width: auto;
+  font-size: 1.5rem;
+  color: greenyellow;
+}
+
+.instructions td {
+  text-align: justify;
+  padding-right: 20px;
+  width: auto;
+  font-size: 1.1rem;
+  color: greenyellow;
+}
+
+footer a {
+  color: gray;
 }
