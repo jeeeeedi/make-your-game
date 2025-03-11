@@ -1,11 +1,102 @@
 import { callTheSpooks, newRow, newCol } from "./spooks.js";
+import { timer, pauseTimer, resumeTimer } from "./timer.js";
 
 export const gameBoard = document.getElementById("game-board");
+let gameStarted = false;
+let gamePaused = false;
+
+// Player starts at the center
+export let playerPos = { row: 8, col: 8 };
+
+function quitGame() {
+  gamePaused = true;
+  pauseTimer();
+  if (confirm("Are you sure you want to quit the current game?")) {
+    location.reload();
+  } else {
+    gamePaused = false;
+    resumeTimer();
+  }
+}
+
+function startGame() {
+  if (gameStarted) return; // Prevent restarting if already started
+  gameStarted = true;
+  gamePaused = false; // Ensure game starts unpaused
+
+  document.getElementById("time").textContent = "01:00"; // Reset timer
+  timer(); // Start the countdown
+
+  document.getElementById("status").textContent =
+    "game running. press space to pause the game or esc to quit the current game and start a new one.";
+
+  createMap(); // Generate the game board divs
+  playerPos = { row: 8, col: 8 };
+  updatePlayerPosition();
+  callTheSpooks(gameBoard); // Start spawning spooks
+  listenForKeydown();
+}
+
+function togglePause() {
+  if (!gameStarted) return; // Do nothing if the game hasn't started
+
+  gamePaused = !gamePaused;
+  if (gamePaused) {
+    pauseTimer(); // Stop the timer
+    //need to add pause for spooks
+    document.getElementById("status").textContent =
+      "game paused. press space to resume.";
+  } else {
+    resumeTimer(); // Continue the timer
+    //need to add resume for spooks
+    document.getElementById("status").textContent =
+      "game running. press space to pause or esc to quit current game and start a new one.";
+  }
+}
+
+// Listen for key presses
+const listenForKeydown = document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    startGame();
+  } else if (e.key === "Escape") {
+    quitGame();
+  } else if (e.key === " ") {
+    togglePause();
+  } else if (!gamePaused && gameStarted) {
+    handleGameControls(e);
+  }
+});
+
+// Handle movement and actions only if the game is running
+function handleGameControls(e) {
+  let newRow = playerPos.row;
+  let newCol = playerPos.col;
+
+  if (e.key === "ArrowUp") newRow--;
+  if (e.key === "ArrowDown") newRow++;
+  if (e.key === "ArrowLeft") newCol--;
+  if (e.key === "ArrowRight") newCol++;
+
+  if (map[newRow][newCol] === 0 || map[newRow][newCol] === 3) {
+    playerPos.row = newRow;
+    playerPos.col = newCol;
+    updatePlayerPosition();
+
+    // Check if the player has moved to the door's position
+    if (map[newRow][newCol] === 3) {
+      winGame();
+    }
+  }
+
+  if (e.key === "x" || e.key === "X") {
+    placeBomb(playerPos.row, playerPos.col);
+  }
+}
 
 export const tileSize = 40;
 export const gridSize = 17;
 
-// Function to generate a random game map
+// Function to generate a random game map object
 function generateMap() {
   let map = Array.from({ length: gridSize }, (_, row) =>
     Array.from({ length: gridSize }, (_, col) => {
@@ -44,8 +135,11 @@ function generateMap() {
   }
 
   // Randomly select a brick to hide the door
-  let hiddenDoor = brickPositions[Math.floor(Math.random() * brickPositions.length)];
-
+  let hiddenDoor =
+    brickPositions[Math.floor(Math.random() * brickPositions.length)];
+  console.log(
+    `HINT: Door is at row ${hiddenDoor.row}, column ${hiddenDoor.col}`
+  );
   // Mark the hidden door position in the map
   map[hiddenDoor.row][hiddenDoor.col] = 3; // 3 represents a destructible brick with a hidden door
 
@@ -59,14 +153,12 @@ const door = map[row][col] === 3; */
 
 export let { map, hiddenDoor } = generateMap();
 
-// Player starts at the center
-export let playerPos = { row: 8, col: 8 };
-
 const player = document.createElement("div");
 player.classList.add("player");
 player.textContent = "😇";
 gameBoard.appendChild(player);
 
+//creates the divs for the game board
 function createMap() {
   gameBoard.textContent = "";
 
@@ -94,31 +186,31 @@ function createMap() {
   gameBoard.appendChild(player); // Ensure player stays on top
 }
 
+createMap();
+
 let playerEnergy = 3;
-const energyCounter = document.createElement('div');
-energyCounter.classList.add('Energy-counter');
+const energyCounter = document.createElement("div");
+energyCounter.classList.add("Energy-counter");
 energyCounter.textContent = `Energy: ${playerEnergy}`;
 document.body.appendChild(energyCounter);
 
 export function decreaseEnergy() {
   if (playerEnergy > 0) {
-      playerEnergy--;
-      updateEnergyCounter(); // Update the counter after losing a energy
+    playerEnergy--;
+    updateEnergyCounter(); // Update the counter after losing a energy
   } else {
-      alert('Game Over!');
+    alert("Game Over!");
   }
 }
-export function isAtSamePosition(playerPos, spookPos = {newRow, newCol}) {
+export function isAtSamePosition(playerPos, spookPos = { newRow, newCol }) {
   return playerPos.row === spookPos.row && playerPos.col === spookPos.col;
 }
 
 function checkCollisionWithSpook() {
   if (isAtSamePosition(playerPos, spookPos)) {
-      decreaseEnergy(); // Call the function to reduce energy
+    decreaseEnergy(); // Call the function to reduce energy
   }
 }
-
-
 
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
@@ -127,58 +219,10 @@ function updatePlayerPosition() {
   }px, 0)`;
 }
 
-function destroyBrick(row, col) {
-  if (map[row][col] === 2 || map[row][col] === 3) {
-    const tile = document.querySelector(
-      `[data-row="${row}"][data-col="${col}"]`
-    );
-    if (!tile) return;
-
-    tile.style.opacity = "0.3"; // Fade effect for destructible tile
-    
-    // If this was the hidden door, show it after destruction
-    if (map[row][col] === 3) {
-      tile.classList.remove("destructible"); // Remove the destructible class
-      tile.classList.add("door");
-      tile.textContent = "🚪"; // Show door emoji
-      tile.style.opacity = "100%"; // Ensure door is fully visible
-    } else {
-      tile.classList.remove("destructible"); // Remove the destructible class
-      tile.classList.add("floor"); // Ensure it stays a floor
-      tile.textContent = ""; // Remove any content from the tile
-      tile.style.opacity = "100%"; // Ensure full visibility after destruction
-    }
-
-    map[row][col] = 0; // Change brick to floor
-  }
-}
-
-document.addEventListener("keydown", (e) => {
-  let newRow = playerPos.row;
-  let newCol = playerPos.col;
-
-  if (e.key === "ArrowUp") newRow--;
-  if (e.key === "ArrowDown") newRow++;
-  if (e.key === "ArrowLeft") newCol--;
-  if (e.key === "ArrowRight") newCol++;
-
-  if (map[newRow][newCol] === 0) {
-    playerPos.row = newRow;
-    playerPos.col = newCol;
-    updatePlayerPosition();
-  }
-
-  if (e.key === "x") {
-    placeBomb(playerPos.row, playerPos.col);
-  }
-});
-
-createMap();
 updatePlayerPosition();
 
- // Change 3 to any number of spooks you want
-  callTheSpooks(gameBoard);
-
+// Change 3 to any number of spooks you want
+callTheSpooks(gameBoard);
 
 let bombs = [];
 let lastBombPlacedTime = 0; // Track the time bomb was placed
@@ -245,12 +289,13 @@ function explode(row, col) {
         tile.textContent = "🚪"; // Show door emoji
         tile.classList.remove("destructible");
         tile.classList.add("door"); // Keep it as a door tile
+      } else if (map[row][col] === 0 || map[row][col] === 1) {
+        return; // Skip if it's a floor or wall
       }
     }
   });
   // Now, remove explosion after animation is done using requestAnimationFrame
   function clearExplosion(timestamp) {
-    
     // You can ensure that the explosion stays for a certain amount of time (e.g., 500ms)
     if (timestamp - lastFrameTime > 500) {
       const tile = document.querySelector(
@@ -281,4 +326,11 @@ function gameLoop() {
 // Start the game loop
 requestAnimationFrame(gameLoop);
 
-
+function winGame() {
+  document.getElementById("status").textContent =
+    "congratulations! you win! press esc to start a new game.";
+  gameStarted = false;
+  gamePaused = true;
+  pauseTimer();
+  listenForKeydown(); // Allow the player to start a new game
+}
