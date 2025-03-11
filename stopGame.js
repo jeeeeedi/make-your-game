@@ -1,6 +1,6 @@
-import { handleKeyPress , gameLoopFrame, spookyHugInterval } from './game.js'
+import { listenForKeydown , gameLoopFrame, spookyHugInterval } from './game.js'
 import { spawnInterval, spooks } from './spooks.js'
-import { timerInterval } from './timer.js';
+import { timerFrame } from './timer.js';
 
 
 let gameOver = false;
@@ -20,9 +20,9 @@ export function enoughIsEnough() {
         console.log("SpookyHug interval cleared")
     }
     
-    if (timerInterval) {
-        clearInterval(timerInterval); // Clear the timer interval
-        console.log("Timer interval cleared");
+    if (timerFrame) {
+        cancelAnimationFrame(timerFrame); // Clear the timer interval
+        console.log("Timer is cleared");
     }
     
     if (gameLoopFrame) {
@@ -35,7 +35,7 @@ export function enoughIsEnough() {
     });
     
       // Disable key
-      document.removeEventListener("keydown", handleKeyPress);
+      document.removeEventListener("keydown", listenForKeydown);
     
       alert("Game over! Do you want to try once again?");
       location.reload(); // refresh the page

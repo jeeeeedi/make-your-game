@@ -38,6 +38,7 @@ function startGame() {
   updatePlayerPosition();
   callTheSpooks(gameBoard); // Start spawning spooks
   listenForKeydown();
+  console.log("Ready to play!")
 }
 
 function togglePause() {
@@ -58,7 +59,8 @@ function togglePause() {
 }
 
 // Listen for key presses
-const listenForKeydown = document.addEventListener("keydown", (e) => {
+export const listenForKeydown = () => {
+  document.addEventListener("keydown", (e) =>{
   if (e.key === "Enter") {
     startGame();
   } else if (e.key === "Escape") {
@@ -69,9 +71,10 @@ const listenForKeydown = document.addEventListener("keydown", (e) => {
     handleGameControls(e);
   }
 });
+}
 
 // Handle movement and actions only if the game is running
-export function handleGameControls(e) {
+function handleGameControls(e) {
   let newRow = playerPos.row;
   let newCol = playerPos.col;
 
@@ -95,6 +98,8 @@ export function handleGameControls(e) {
     placeBomb(playerPos.row, playerPos.col);
   }
 }
+
+
 
 export const tileSize = 40;
 export const gridSize = 17;
@@ -189,35 +194,7 @@ function createMap() {
 
   gameBoard.appendChild(player); // Ensure player stays on top
 }
-
-
-createMap();
-
-let playerEnergy = 3;
-const energyCounter = document.createElement("div");
-energyCounter.classList.add("Energy-counter");
-energyCounter.textContent = `Energy: ${playerEnergy}`;
-document.body.appendChild(energyCounter);
-
-export function decreaseEnergy() {
-  if (playerEnergy > 0) {
-    playerEnergy--;
-    updateEnergyCounter(); // Update the counter after losing a energy
-  } else {
-    alert("Game Over!");
-  }
-}
-export function isAtSamePosition(playerPos, spookPos = { newRow, newCol }) {
-  return playerPos.row === spookPos.row && playerPos.col === spookPos.col;
-}
-
-function checkCollisionWithSpook() {
-  if (isAtSamePosition(playerPos, spookPos)) {
-    decreaseEnergy(); // Call the function to reduce energy
-  }
-}
-
-
+startGame()
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
   player.style.transform = `translate3d(${playerPos.col * tileSize}px, ${
@@ -225,11 +202,7 @@ function updatePlayerPosition() {
   }px, 0)`;
 }
 
-
-updatePlayerPosition();
-
 // Change 3 to any number of spooks you want
-callTheSpooks(gameBoard);
 export let spookyHugInterval = setInterval(checkSpookyHug, 500);
 
 let bombs = [];

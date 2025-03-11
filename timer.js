@@ -1,8 +1,9 @@
-import { enoughIsEnough } from "./stopGame.js";
+import { enoughIsEnough } from "./stopGame.js"; /// call this function when time up
 
 let timeLeft = 60000; // 1 minutes in milliseconds
 let lastTime = null;
 let timerRunning = false;
+export let timerFrame;
 
 export function timer() {
   let timeDisplay = document.getElementById("time");
@@ -18,6 +19,7 @@ export function timer() {
     if (timeLeft <= 0) {
       timeLeft = 0;
       document.getElementById("status").textContent = "Game Over!";
+      enoughIsEnough();
       return;
     }
 
@@ -25,11 +27,11 @@ export function timer() {
     let seconds = Math.floor((timeLeft % 60000) / 1000);
     timeDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 
-    requestAnimationFrame(updateTimer);
+    timerFrame = requestAnimationFrame(updateTimer);
   }
 
   timerRunning = true;
-  requestAnimationFrame(updateTimer);
+  timerFrame = requestAnimationFrame(updateTimer);
 }
 
 export function pauseTimer() {
@@ -40,5 +42,6 @@ export function resumeTimer() {
   if (!timerRunning) {
     lastTime = null; // Reset lastTime to avoid time jumps
     timerRunning = true;
-    requestAnimationFrame(timer);
+    timerFrame = requestAnimationFrame(timer);
   }
+}
