@@ -1,7 +1,7 @@
-import { enoughIsEnough } from "./lives.js";
+import { enoughIsEnough } from "./stopGame.js";
 
+export let timerInterval;
 let time = 180;
-let timerInterval;
 
 export function startTimer() {
     updateTimerDisplay(); // Show initial time before the countdown starts
@@ -10,15 +10,9 @@ export function startTimer() {
             time--;
             updateTimerDisplay();
         } else {
-            stopTimer();
-            //alert("Time's up! Game Over!");
             enoughIsEnough();
         }
     }, 1000);
-}
-
-export function stopTimer() {
-    clearInterval(timerInterval);
 }
 
 function updateTimerDisplay() {

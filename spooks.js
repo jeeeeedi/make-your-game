@@ -2,6 +2,7 @@ import { map, tileSize, gridSize } from './game.js';
 import { checkSpookyHug } from './lives.js'
 
 export let spooks = [];
+export let spawnInterval;
 
 export function callTheSpooks(gameBoard) {
     
@@ -26,7 +27,7 @@ export function callTheSpooks(gameBoard) {
 
     spawnSpook(); // first spook appears without any delay. 
 
-    const spawnInterval = setInterval(() =>{
+    spawnInterval = setInterval(() =>{
         if (spooks.length >= 6) {
             clearInterval(spawnInterval);
             return;

@@ -1,11 +1,13 @@
 import { callTheSpooks } from "./spooks.js";
 import { checkSpookyHug } from "./lives.js"
 import { startTimer } from "./timer.js";
+import { enoughIsEnough } from "./stopGame.js";
 
 export const gameBoard = document.getElementById("game-board");
 
 export const tileSize = 40;
 export const gridSize = 17;
+export let gameLoopFrame
 
 // Function to generate a random game map
 function generateMap() {
@@ -129,8 +131,8 @@ function destroyBrick(row, col) {
     map[row][col] = 0; // Change brick to floor
   }
 }
-
-document.addEventListener("keydown", (e) => {
+// wrapped key handling into a function to have an option to turn it off in stopGame.js
+export function handleKeyPress(e) {
   let newRow = playerPos.row;
   let newCol = playerPos.col;
 
@@ -148,13 +150,15 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "x") {
     placeBomb(playerPos.row, playerPos.col);
   }
-});
+};
+
+document.addEventListener("keydown", handleKeyPress)
 
 createMap();
 updatePlayerPosition();
 startTimer();
 callTheSpooks(gameBoard);
-setInterval(checkSpookyHug, 500);
+export let spookyHugInterval = setInterval(checkSpookyHug, 500);
 
 
 let bombs = [];
@@ -252,10 +256,10 @@ function gameLoop() {
   explodeBomb();
 
   // Continuously request the next frame
-  requestAnimationFrame(gameLoop);
+  gameLoopFrame = requestAnimationFrame(gameLoop);
 }
 
 // Start the game loop
-requestAnimationFrame(gameLoop);
+gameLoopFrame = requestAnimationFrame(gameLoop);
 
 

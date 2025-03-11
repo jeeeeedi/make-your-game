@@ -1,6 +1,6 @@
 import { playerPos } from './game.js'; 
 import { spooks } from './spooks.js';
-import { stopTimer } from './timer.js';
+import { enoughIsEnough } from './stopGame.js';
 
 let playerLives = 5;
 const livesCounter = document.getElementById('lives');
@@ -11,7 +11,6 @@ export function decreaseLives() {
       updateLivesCounter(); // Update the counter after losing a energy
   } 
   if (playerLives === 0) {
-      stopTimer();
       enoughIsEnough();
   }
 }
@@ -30,9 +29,4 @@ export function checkSpookyHug() {
           decreaseLives();
       }
   });
-}
-
-export function enoughIsEnough() {
-  alert("Game over! Do you want to try once again?");
-  location.reload();
 }
