@@ -152,7 +152,7 @@ document.addEventListener("keydown", (e) => {
 createMap();
 updatePlayerPosition();
 callTheSpooks(gameBoard);
-checkSpookyHug(); 
+setInterval(checkSpookyHug, 500);
 
 
 let bombs = [];
