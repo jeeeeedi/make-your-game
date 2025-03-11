@@ -1,4 +1,5 @@
-import { callTheSpooks, newRow, newCol } from "./spooks.js";
+import { callTheSpooks } from "./spooks.js";
+import { checkSpookyHug } from "./lives.js"
 
 export const gameBoard = document.getElementById("game-board");
 
@@ -94,31 +95,6 @@ function createMap() {
   gameBoard.appendChild(player); // Ensure player stays on top
 }
 
-let playerEnergy = 3;
-const energyCounter = document.createElement('div');
-energyCounter.classList.add('Energy-counter');
-energyCounter.textContent = `Energy: ${playerEnergy}`;
-document.body.appendChild(energyCounter);
-
-export function decreaseEnergy() {
-  if (playerEnergy > 0) {
-      playerEnergy--;
-      updateEnergyCounter(); // Update the counter after losing a energy
-  } else {
-      alert('Game Over!');
-  }
-}
-export function isAtSamePosition(playerPos, spookPos = {newRow, newCol}) {
-  return playerPos.row === spookPos.row && playerPos.col === spookPos.col;
-}
-
-function checkCollisionWithSpook() {
-  if (isAtSamePosition(playerPos, spookPos)) {
-      decreaseEnergy(); // Call the function to reduce energy
-  }
-}
-
-
 
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
@@ -175,9 +151,8 @@ document.addEventListener("keydown", (e) => {
 
 createMap();
 updatePlayerPosition();
-
- // Change 3 to any number of spooks you want
-  callTheSpooks(gameBoard);
+callTheSpooks(gameBoard);
+checkSpookyHug(); 
 
 
 let bombs = [];
