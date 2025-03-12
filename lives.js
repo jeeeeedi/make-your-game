@@ -13,22 +13,23 @@ export function decreaseLives() {
   
   if (playerLives === 0) {
     console.log("I'm done")
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       enoughIsEnough();
-    });
+    }, 100);
   }
   
 }
 
-export function updateLivesCounter() {
+function updateLivesCounter() {
   livesCounter.textContent = `${playerLives}`;
   document.getElementById("lives").textContent =
     playerLives > 0 ? "❤️".repeat(playerLives) : "🫶🏼";
 }
 
-export function isAtSamePosition(playerPos, spookPos) {
+function isAtSamePosition(playerPos, spookPos) {
   return playerPos.row === spookPos.row && playerPos.col === spookPos.col;
 }
+
 export function checkSpookyHug() {
   spooks.forEach((spook) => {
     if (isAtSamePosition(playerPos, spook.position)) {

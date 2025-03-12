@@ -1,5 +1,4 @@
 import { map, tileSize, gridSize } from './game.js';
-import { checkSpookyHug } from './lives.js'
 
 export let spooks = [];
 export let spawnInterval;
@@ -42,10 +41,8 @@ export function callTheSpooks(gameBoard) {
             requestAnimationFrame(spawnLoop); // Continue loop
         }
     }
-    
     // Start the loop
     requestAnimationFrame(spawnLoop);
-    
 
     startMovingSpooks();
 }
@@ -54,7 +51,7 @@ function startMovingSpooks() {
     let lastMoveTime = performance.now();
 
     function update(time) {
-        if (time - lastMoveTime < 1000) {
+        if (time - lastMoveTime < 600) {
             requestAnimationFrame(update);
             return;
         }
@@ -89,8 +86,6 @@ function moveSpooks() {
             && newCol >= 0 && newCol < gridSize 
             && map[newRow][newCol] === 0) {
             spook.style.transform = `translate3d(${newCol * tileSize}px, ${newRow * tileSize}px, 0)`;
-
-            checkSpookyHug();
             
             position.row = newRow;
             position.col = newCol;

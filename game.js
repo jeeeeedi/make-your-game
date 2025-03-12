@@ -36,7 +36,7 @@ function startGame() {
   //playerPos = { row: 8, col: 8 };
   updatePlayerPosition();
   callTheSpooks(gameBoard); // Start spawning spooks
-  listenForKeydown();
+  //listenForKeydown();
   console.log("Ready to play!");
 }
 
@@ -203,12 +203,13 @@ function updatePlayerPosition() {
   player.style.transform = `translate(${playerPos.col * tileSize}px, ${
     playerPos.row * tileSize
   }px)`;
+
+  checkSpookyHug();
 }
 
 updatePlayerPosition();
 
 // Change 3 to any number of spooks you want
-export let spookyHugInterval = setInterval(checkSpookyHug, 500);
 
 let bombs = [];
 
