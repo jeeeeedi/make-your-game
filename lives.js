@@ -8,12 +8,16 @@ const livesCounter = document.getElementById("lives");
 export function decreaseLives() {
   if (playerLives > 0) {
     playerLives--;
-    updateLivesCounter(); // Update the counter after losing a life
   }
+  updateLivesCounter(); // Update the counter after losing a life
+  
   if (playerLives === 0) {
-    document.getElementById("lives").textContent = "";
-    enoughIsEnough();
+    console.log("I'm done")
+    requestAnimationFrame(() => {
+      enoughIsEnough();
+    });
   }
+  
 }
 
 export function updateLivesCounter() {

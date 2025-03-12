@@ -1,7 +1,7 @@
 import { timer, pauseTimer, resumeTimer } from "./timer.js";
 import { callTheSpooks } from "./spooks.js";
 import { checkSpookyHug, decreaseLives } from "./lives.js";
-import { enoughIsEnough } from "./stopGame.js";
+
 
 export const gameBoard = document.getElementById("game-board");
 let gameStarted = false;
@@ -162,7 +162,11 @@ function generateMap() {
 
 export let { map, hiddenDoor } = generateMap();
 
-const player = document.getElementById("player");
+//const player = document.getElementById("player");
+const player = document.createElement("div");
+player.classList.add("player");
+player.textContent = "😇";
+gameBoard.appendChild(player);
 
 //creates the divs for the game board
 function createMap() {
@@ -326,4 +330,4 @@ function winGame() {
   listenForKeydown(); // Allow the player to start a new game
 }
 
-listenForKeydown();
+//listenForKeydown();

@@ -1,4 +1,4 @@
-import { listenForKeydown , gameLoopFrame, spookyHugInterval } from './game.js'
+import { listenForKeydown , gameLoopFrame } from './game.js'
 import { spawnInterval, spooks } from './spooks.js'
 import { timerFrame } from './timer.js';
 
@@ -13,11 +13,6 @@ export function enoughIsEnough() {
     if (spawnInterval) {
         clearInterval(spawnInterval);
         console.log("Spook spawn interval cleared")
-    }
-
-    if (spookyHugInterval) {
-        clearInterval(spookyHugInterval);
-        console.log("SpookyHug interval cleared")
     }
     
     if (timerFrame) {
