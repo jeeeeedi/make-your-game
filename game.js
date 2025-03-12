@@ -1,6 +1,6 @@
 import { timer, pauseTimer, resumeTimer } from "./timer.js";
 import { callTheSpooks } from "./spooks.js";
-import { checkSpookyHug, decreaseLives } from "./lives.js";
+import { decreaseLives } from "./lives.js";
 
 
 export const gameBoard = document.getElementById("game-board");
@@ -203,8 +203,6 @@ function updatePlayerPosition() {
   player.style.transform = `translate(${playerPos.col * tileSize}px, ${
     playerPos.row * tileSize
   }px)`;
-
-  checkSpookyHug();
 }
 
 updatePlayerPosition();

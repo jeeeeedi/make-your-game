@@ -1,4 +1,5 @@
 import { map, tileSize, gridSize } from './game.js';
+import { checkSpookyHug } from './lives.js';
 
 export let spooks = [];
 export let spawnInterval;
@@ -91,4 +92,5 @@ function moveSpooks() {
             position.col = newCol;
         }
     });
+    checkSpookyHug();
 }
