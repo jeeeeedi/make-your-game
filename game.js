@@ -1,8 +1,7 @@
 import { timer, pauseTimer, resumeTimer } from "./timer.js";
 import { callTheSpooks } from "./spooks.js";
-import { checkSpookyHug } from "./lives.js"
+import { checkSpookyHug, decreaseLives } from "./lives.js";
 import { enoughIsEnough } from "./stopGame.js";
-
 
 export const gameBoard = document.getElementById("game-board");
 let gameStarted = false;
@@ -34,11 +33,11 @@ function startGame() {
     "game running. press space to pause the game or esc to quit the current game and start a new one.";
 
   createMap(); // Generate the game board divs
-  playerPos = { row: 8, col: 8 };
+  //playerPos = { row: 8, col: 8 };
   updatePlayerPosition();
   callTheSpooks(gameBoard); // Start spawning spooks
   listenForKeydown();
-  console.log("Ready to play!")
+  console.log("Ready to play!");
 }
 
 function togglePause() {
@@ -59,38 +58,46 @@ function togglePause() {
 }
 
 // Listen for key presses
-export const listenForKeydown = () => {
-  document.addEventListener("keydown", (e) =>{
+export const listenForKeydown = document.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     startGame();
   } else if (e.key === "Escape") {
     quitGame();
   } else if (e.key === " ") {
+    e.preventDefault(); // Prevent spacebar from scrolling the page
     togglePause();
   } else if (!gamePaused && gameStarted) {
     handleGameControls(e);
   }
 });
-}
 
 // Handle movement and actions only if the game is running
 function handleGameControls(e) {
   let newRow = playerPos.row;
   let newCol = playerPos.col;
 
-  if (e.key === "ArrowUp") newRow--;
+  if (e.key === "ArrowUp") {
+    newRow--;
+    e.preventDefault(); // Prevent scrolling the page
+  }
   if (e.key === "ArrowDown") newRow++;
-  if (e.key === "ArrowLeft") newCol--;
+  if (e.key === "ArrowLeft") {
+    newCol--;
+    e.preventDefault(); // Prevent scrolling the page
+  }
   if (e.key === "ArrowRight") newCol++;
 
-  if (map[newRow][newCol] === 0 || map[newRow][newCol] === 3) {
-    playerPos.row = newRow;
-    playerPos.col = newCol;
-    updatePlayerPosition();
+  // Ensure the new position is within the map boundaries
+  if (newRow >= 0 && newRow < gridSize && newCol >= 0 && newCol < gridSize) {
+    if (map[newRow][newCol] === 0 || map[newRow][newCol] === 3) {
+      playerPos.row = newRow;
+      playerPos.col = newCol;
+      updatePlayerPosition();
 
-    // Check if the player has moved to the door's position
-    if (map[newRow][newCol] === 3) {
-      winGame();
+      // Check if the player has moved to the door's position
+      if (map[newRow][newCol] === 3) {
+        winGame();
+      }
     }
   }
 
@@ -99,11 +106,9 @@ function handleGameControls(e) {
   }
 }
 
-
-
 export const tileSize = 40;
 export const gridSize = 17;
-export let gameLoopFrame
+export let gameLoopFrame;
 
 // Function to generate a random game map object
 function generateMap() {
@@ -154,18 +159,10 @@ function generateMap() {
 
   return { map, hiddenDoor };
 }
-/* 
-const floor = map[row][col] === 0;
-const wall = map[row][col] === 1;
-const destructible = map[row][col] === 2;
-const door = map[row][col] === 3; */
 
 export let { map, hiddenDoor } = generateMap();
 
-const player = document.createElement("div");
-player.classList.add("player");
-player.textContent = "😇";
-gameBoard.appendChild(player);
+const player = document.getElementById("player");
 
 //creates the divs for the game board
 function createMap() {
@@ -194,19 +191,22 @@ function createMap() {
 
   gameBoard.appendChild(player); // Ensure player stays on top
 }
-startGame()
+
+createMap();
+
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
-  player.style.transform = `translate3d(${playerPos.col * tileSize}px, ${
+  player.style.transform = `translate(${playerPos.col * tileSize}px, ${
     playerPos.row * tileSize
-  }px, 0)`;
+  }px)`;
 }
+
+updatePlayerPosition();
 
 // Change 3 to any number of spooks you want
 export let spookyHugInterval = setInterval(checkSpookyHug, 500);
 
 let bombs = [];
-let lastBombPlacedTime = 0; // Track the time bomb was placed
 
 function placeBomb(row, col) {
   // Only place bombs on empty tiles (this includes destroyed bricks and floors)
@@ -243,12 +243,21 @@ function explode(row, col) {
     { row: row + 1, col }, // Down
     { row, col: col - 1 }, // Left
     { row, col: col + 1 }, // Right
+    { row: row - 1, col: col - 1 }, // Up-Left
+    { row: row - 1, col: col + 1 }, // Up-Right
+    { row: row + 1, col: col - 1 }, // Down-Left
+    { row: row + 1, col: col + 1 }, // Down-Right
   ];
 
   const tile = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
   if (tile) {
     tile.textContent = "💥"; // Show explosion emoji at bomb's location
     tile.classList.add("explosion");
+  }
+
+  if (playerPos.row === row && playerPos.col === col) {
+    // Player is hit by the explosion
+    decreaseLives();
   }
 
   // Handle surrounding destructible bricks
@@ -275,6 +284,7 @@ function explode(row, col) {
       }
     }
   });
+
   // Now, remove explosion after animation is done using requestAnimationFrame
   function clearExplosion(timestamp) {
     // You can ensure that the explosion stays for a certain amount of time (e.g., 500ms)
@@ -315,3 +325,5 @@ function winGame() {
   pauseTimer();
   listenForKeydown(); // Allow the player to start a new game
 }
+
+listenForKeydown();

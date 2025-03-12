@@ -27,13 +27,25 @@ export function callTheSpooks(gameBoard) {
 
     spawnSpook(); // first spook appears without any delay. 
 
-    spawnInterval = setInterval(() =>{
-        if (spooks.length >= 6) {
-            clearInterval(spawnInterval);
-            return;
+    let lastSpawnTime = performance.now(); // Track last spawn time
+    let spawnInterval = 7000; // 7 seconds in milliseconds
+    let isSpawning = true; // Control spawning loop
+    
+    function spawnLoop(timestamp) {
+        if (!isSpawning) return; // Stop loop if needed
+    
+        if (spooks.length < 6) {
+            if (timestamp - lastSpawnTime >= spawnInterval) {
+                spawnSpook();
+                lastSpawnTime = timestamp; // Reset timer
+            }
+            requestAnimationFrame(spawnLoop); // Continue loop
         }
-        spawnSpook();
-    }, 7000);
+    }
+    
+    // Start the loop
+    requestAnimationFrame(spawnLoop);
+    
 
     startMovingSpooks();
 }
