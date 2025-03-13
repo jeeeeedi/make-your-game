@@ -1,11 +1,13 @@
 import { timer, pauseTimer, resumeTimer } from "./timer.js";
-import { callTheSpooks } from "./spooks.js";
-import { decreaseLives } from "./lives.js";
+import { callTheSpooks, spooks } from "./spooks.js";
+import { decreaseLives, isAtSamePosition } from "./lives.js";
 
 
 export const gameBoard = document.getElementById("game-board");
 let gameStarted = false;
 let gamePaused = false;
+
+let xp = document.getElementById("xp");
 
 // Player starts at the center
 export let playerPos = { row: 8, col: 8 };
@@ -80,12 +82,18 @@ function handleGameControls(e) {
     newRow--;
     e.preventDefault(); // Prevent scrolling the page
   }
-  if (e.key === "ArrowDown") newRow++;
+  if (e.key === "ArrowDown") {
+    newRow++
+    e.preventDefault(); // Prevent scrolling the page
+  };
   if (e.key === "ArrowLeft") {
     newCol--;
     e.preventDefault(); // Prevent scrolling the page
   }
-  if (e.key === "ArrowRight") newCol++;
+  if (e.key === "ArrowRight") {
+    newCol++
+    e.preventDefault(); // Prevent scrolling the page
+  };
 
   // Ensure the new position is within the map boundaries
   if (newRow >= 0 && newRow < gridSize && newCol >= 0 && newCol < gridSize) {
@@ -200,9 +208,8 @@ createMap();
 
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
-  player.style.transform = `translate(${playerPos.col * tileSize}px, ${
-    playerPos.row * tileSize
-  }px)`;
+  player.style.transform = `translate(${playerPos.col * tileSize}px, ${playerPos.row * tileSize
+    }px)`;
 }
 
 updatePlayerPosition();
@@ -271,17 +278,29 @@ function explode(row, col) {
       );
       if (!tile) return;
 
+
+      // player caught spook
+      spooks.forEach((spook) => {
+        if (isAtSamePosition({ row, col }, spook.position)) {
+          xp.textContent = parseInt(xp.textContent) + 30; // 30xp per spook
+          //spook.textContent = "";
+        }
+      });
+
+
       // Only destroy destructible tiles (not permanent walls)
       if (map[row][col] === 2) {
         tile.style.opacity = "0"; // Fade destructible bricks
         map[row][col] = 0; // Mark it as destroyed
         tile.classList.remove("destructible");
         tile.classList.add("floor"); // Keep it as a floor tile
+        xp.textContent = parseInt(xp.textContent) + 10; // 10xp per brick
       } else if (map[row][col] === 3) {
         // If the hidden door is destroyed, reveal it
         tile.textContent = "🚪"; // Show door emoji
         tile.classList.remove("destructible");
         tile.classList.add("door"); // Keep it as a door tile
+        xp.textContent = parseInt(xp.textContent) + 50; // 50xp for revealing a door
       } else if (map[row][col] === 0 || map[row][col] === 1) {
         return; // Skip if it's a floor or wall
       }
@@ -321,6 +340,7 @@ function gameLoop() {
 gameLoopFrame = requestAnimationFrame(gameLoop);
 
 function winGame() {
+  xp.textContent = parseInt(xp.textContent) + 100; // 100xp for winning
   document.getElementById("status").textContent =
     "congratulations! you win! press esc to start a new game.";
   gameStarted = false;
@@ -328,5 +348,3 @@ function winGame() {
   pauseTimer();
   listenForKeydown(); // Allow the player to start a new game
 }
-
-//listenForKeydown();

@@ -26,7 +26,7 @@ function updateLivesCounter() {
     playerLives > 0 ? "❤️".repeat(playerLives) : "🫶🏼";
 }
 
-function isAtSamePosition(playerPos, spookPos) {
+export function isAtSamePosition(playerPos, spookPos) {
   return playerPos.row === spookPos.row && playerPos.col === spookPos.col;
 }
 
@@ -35,5 +35,6 @@ export function checkSpookyHug() {
     if (isAtSamePosition(playerPos, spook.position)) {
       decreaseLives();
     }
+    
   });
 }

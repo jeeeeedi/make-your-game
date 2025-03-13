@@ -15,7 +15,7 @@ body {
 }
 
 header {
-  padding-top: 60px;
+  padding-top: 150px;
 }
 
 h1,
@@ -91,10 +91,10 @@ p {
 
 .bomb {
   font-size: 30px;
-  animation: bombBlink 0.15s infinite alternate;
+  animation: blink 0.15s infinite alternate;
 }
 
-@keyframes bombBlink {
+@keyframes blink {
   0% {
     opacity: 1;
   }
