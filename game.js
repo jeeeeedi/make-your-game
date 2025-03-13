@@ -82,17 +82,17 @@ function handleGameControls(e) {
     e.preventDefault(); // Prevent scrolling the page
   }
   if (e.key === "ArrowDown") {
-    newRow++
+    newRow++;
     e.preventDefault(); // Prevent scrolling the page
-  };
+  }
   if (e.key === "ArrowLeft") {
     newCol--;
     e.preventDefault(); // Prevent scrolling the page
   }
   if (e.key === "ArrowRight") {
-    newCol++
+    newCol++;
     e.preventDefault(); // Prevent scrolling the page
-  };
+  }
 
   // Ensure the new position is within the map boundaries
   if (newRow >= 0 && newRow < gridSize && newCol >= 0 && newCol < gridSize) {
@@ -169,11 +169,11 @@ function generateMap() {
 
 export let { map, hiddenDoor } = generateMap();
 
-//const player = document.getElementById("player");
-const player = document.createElement("div");
+const player = document.getElementById("player");
+/* const player = document.createElement("div");
 player.classList.add("player");
 player.textContent = "😇";
-gameBoard.appendChild(player);
+gameBoard.appendChild(player); */
 
 //creates the divs for the game board
 function createMap() {
@@ -207,8 +207,9 @@ createMap();
 
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
 function updatePlayerPosition() {
-  player.style.transform = `translate(${playerPos.col * tileSize}px, ${playerPos.row * tileSize
-    }px)`;
+  player.style.transform = `translate(${playerPos.col * tileSize}px, ${
+    playerPos.row * tileSize
+  }px)`;
 }
 
 updatePlayerPosition();
@@ -264,12 +265,7 @@ function explode(row, col) {
     tile.classList.add("explosion");
   }
 
-  if (playerPos.row === row && playerPos.col === col) {
-    // Player is hit by the explosion
-    decreaseLives();
-  }
-
-  // Handle surrounding destructible bricks
+  // Handle surrounding tiles
   explosionTiles.forEach(({ row, col }) => {
     if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
       const tile = document.querySelector(
@@ -277,15 +273,18 @@ function explode(row, col) {
       );
       if (!tile) return;
 
+      // If player is caught in the explosion, decrease lives
+      if (isAtSamePosition({ row, col }, playerPos)) {
+        decreaseLives();
+      }
 
-      // player caught spook
-      spooks.forEach((spook) => {
+      // If a spook is hit, remove it and add 30 XP
+      spooks.filter((spook) => {
         if (isAtSamePosition({ row, col }, spook.position)) {
           xp.textContent = parseInt(xp.textContent) + 30; // 30xp per spook
-          //spook.textContent = "";
+          spook.element.style.opacity = "0"; // Fade out the spook
         }
       });
-
 
       // Only destroy destructible tiles (not permanent walls)
       if (map[row][col] === 2) {

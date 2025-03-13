@@ -30,10 +30,11 @@
 
 
 Some current issues that would be good to fix also:
-- Pause: should also pause spooks movement and spawning
+- ✔️ Pause: should also pause spooks movement and spawning
 - Win: should stop everything and maybe open a dialog to congratulate and ask if user wants to play again.
-- Bomb: if player is on adjacent tile (not just on the same tile), then lives should also be decreased
+- ✔️ Bomb: if player is on adjacent tile (not just on the same tile), then lives should also be decreased
 - Instructions and controls can be a pop-up
+- Layers: some unnecessary layers are being repainted sometimes when bomb is dropped
 
 Additional features:
 - bonus that can add lives or add time

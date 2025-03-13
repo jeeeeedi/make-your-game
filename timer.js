@@ -25,7 +25,9 @@ export function timer() {
 
     let minutes = Math.floor(timeLeft / 60000);
     let seconds = Math.floor((timeLeft % 60000) / 1000);
-    timeDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    timeDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
 
     timerFrame = requestAnimationFrame(updateTimer);
   }
