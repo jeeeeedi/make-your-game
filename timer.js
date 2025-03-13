@@ -1,6 +1,6 @@
 import { enoughIsEnough } from "./stopGame.js"; /// call this function when time up
 
-let timeLeft = 60000; // 1 minutes in milliseconds
+let timeLeft = 60000; // 1 minute in milliseconds
 let lastTime = null;
 let timerRunning = false;
 export let timerFrame;

@@ -1,11 +1,10 @@
 import { timer, pauseTimer, resumeTimer } from "./timer.js";
-import { callTheSpooks, spooks } from "./spooks.js";
+import { callTheSpooks, spooks, movingSpooks } from "./spooks.js";
 import { decreaseLives, isAtSamePosition } from "./lives.js";
-
 
 export const gameBoard = document.getElementById("game-board");
 let gameStarted = false;
-let gamePaused = false;
+export let gamePaused = false;
 
 let xp = document.getElementById("xp");
 
@@ -48,12 +47,12 @@ function togglePause() {
   gamePaused = !gamePaused;
   if (gamePaused) {
     pauseTimer(); // Stop the timer
-    //need to add pause for spooks
+    cancelAnimationFrame(movingSpooks); // Stop moving spooks
     document.getElementById("status").textContent =
       "game paused. press space to resume.";
   } else {
     resumeTimer(); // Continue the timer
-    //need to add resume for spooks
+    callTheSpooks(gameBoard); // Resume spawning and moving spooks
     document.getElementById("status").textContent =
       "game running. press space to pause or esc to quit current game and start a new one.";
   }

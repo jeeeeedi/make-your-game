@@ -13,9 +13,9 @@
     ✔️ Restart
     ✔️ For the pause menu you must be able to pause, restart, and continue the game whenever you want to do so. The frames should not drop if paused.
 
-- A score board that displays the following metrics:
+✔️ A score board that displays the following metrics:
     ✔️ Countdown clock or Timer that will indicate the amount of time the player has until the game ends or the time that the game has been running
-    - Score that will display the current score (XP or points)
+    ✔️ Score that will display the current score (XP or points)
     ✔️ Lives that shows the number of lives that the player has left
 
 - The use of layers must be minimal but not zero in order to optimize the rendering performance.
@@ -30,7 +30,7 @@
 
 
 Some current issues that would be good to fix also:
-- Pause: should also pause spooks movement
+- Pause: should also pause spooks movement and spawning
 - Win: should stop everything and maybe open a dialog to congratulate and ask if user wants to play again.
 - Bomb: if player is on adjacent tile (not just on the same tile), then lives should also be decreased
 - Instructions and controls can be a pop-up
