@@ -1,6 +1,7 @@
-import { map, tileSize, gridSize, gamePaused } from "./game.js";
+import { map, tileSize, gridSize } from "./game.js";
 import { checkSpookyHug } from "./lives.js";
 import { gameOver } from "./stopGame.js";
+import { gamePaused } from "./stateMgr.js";
 
 export let spooks = [];
 export let spawnInterval;

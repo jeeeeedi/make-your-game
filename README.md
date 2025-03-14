@@ -18,7 +18,7 @@
     ✔️ Score that will display the current score (XP or points)
     ✔️ Lives that shows the number of lives that the player has left
 
-- The use of layers must be minimal but not zero in order to optimize the rendering performance.
+✔️ The use of layers must be minimal but not zero in order to optimize the rendering performance.
 
 ✔️ You must not use frameworks or canvas, the game must be implemented using plain JS/DOM and HTML only
 

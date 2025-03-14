@@ -1,65 +1,23 @@
-import { timer, pauseTimer, resumeTimer } from "./timer.js";
 import { callTheSpooks, spooks, movingSpooks } from "./spooks.js";
-import { decreaseLives, isAtSamePosition } from "./lives.js";
+import { decreaseLives, isAtSamePosition, blink } from "./lives.js";
+import {
+  quitGame,
+  startGame,
+  togglePause,
+  winGame,
+  gamePaused,
+  gameStarted,
+} from "./stateMgr.js";
 
 export const gameBoard = document.getElementById("game-board");
-let gameStarted = false;
-export let gamePaused = false;
 
 let xp = document.getElementById("xp");
 
 // Player starts at the center
 export let playerPos = { row: 8, col: 8 };
 
-function quitGame() {
-  gamePaused = true;
-  pauseTimer();
-  if (confirm("Are you sure you want to quit the current game?")) {
-    location.reload();
-  } else {
-    gamePaused = false;
-    resumeTimer();
-  }
-}
-
-function startGame() {
-  if (gameStarted) return; // Prevent restarting if already started
-  gameStarted = true;
-  gamePaused = false; // Ensure game starts unpaused
-
-  document.getElementById("time").textContent = "01:00"; // Reset timer
-  timer(); // Start the countdown
-
-  document.getElementById("status").textContent =
-    "game running. press space to pause the game or esc to quit the current game and start a new one.";
-
-  createMap(); // Generate the game board divs
-  //playerPos = { row: 8, col: 8 };
-  updatePlayerPosition();
-  callTheSpooks(gameBoard); // Start spawning spooks
-  //listenForKeydown();
-  console.log("Ready to play!");
-}
-
-function togglePause() {
-  if (!gameStarted) return; // Do nothing if the game hasn't started
-
-  gamePaused = !gamePaused;
-  if (gamePaused) {
-    pauseTimer(); // Stop the timer
-    cancelAnimationFrame(movingSpooks); // Stop moving spooks
-    document.getElementById("status").textContent =
-      "game paused. press space to resume.";
-  } else {
-    resumeTimer(); // Continue the timer
-    callTheSpooks(gameBoard); // Resume spawning and moving spooks
-    document.getElementById("status").textContent =
-      "game running. press space to pause or esc to quit current game and start a new one.";
-  }
-}
-
 // Listen for key presses
-export const listenForKeydown = document.addEventListener("keydown", (e) => {
+export let listenForKeydown = document.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     startGame();
   } else if (e.key === "Escape") {
@@ -118,7 +76,7 @@ export const gridSize = 17;
 export let gameLoopFrame;
 
 // Function to generate a random game map object
-function generateMap() {
+export function generateMap() {
   let map = Array.from({ length: gridSize }, (_, row) =>
     Array.from({ length: gridSize }, (_, col) => {
       if (
@@ -176,7 +134,7 @@ player.textContent = "😇";
 gameBoard.appendChild(player); */
 
 //creates the divs for the game board
-function createMap() {
+export function createMap() {
   gameBoard.textContent = "";
 
   for (let row = 0; row < gridSize; row++) {
@@ -206,7 +164,7 @@ function createMap() {
 createMap();
 
 // Instead of relying on left and top for movement, use transform: translate3d(x, y, z), which leverages the GPU for rendering.
-function updatePlayerPosition() {
+export function updatePlayerPosition() {
   player.style.transform = `translate(${playerPos.col * tileSize}px, ${
     playerPos.row * tileSize
   }px)`;
@@ -225,10 +183,10 @@ function placeBomb(row, col) {
   const tile = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
   if (!tile) return;
 
-  tile.classList.add("bomb");
-  tile.style.opacity = "100%";
+  //tile.classList.add("bomb");
+  //tile.style.opacity = "100%";
   tile.textContent = "💣"; // Set bomb emoji on the tile
-
+  blink(tile);
   // Store the bomb's placement time
   bombs.push({ row, col, placedAt: performance.now() });
 }
@@ -263,6 +221,7 @@ function explode(row, col) {
   if (tile) {
     tile.textContent = "💥"; // Show explosion emoji at bomb's location
     tile.classList.add("explosion");
+    blink(tile);
   }
 
   // Handle surrounding tiles
@@ -282,16 +241,18 @@ function explode(row, col) {
       spooks.filter((spook) => {
         if (isAtSamePosition({ row, col }, spook.position)) {
           xp.textContent = parseInt(xp.textContent) + 30; // 30xp per spook
+          blink(spook.element);
           spook.element.style.opacity = "0"; // Fade out the spook
         }
       });
 
       // Only destroy destructible tiles (not permanent walls)
       if (map[row][col] === 2) {
-        tile.style.opacity = "0"; // Fade destructible bricks
+        blink(tile);
+        //tile.style.opacity = "0"; // Fade destructible bricks
         map[row][col] = 0; // Mark it as destroyed
-        tile.classList.remove("destructible");
-        tile.classList.add("floor"); // Keep it as a floor tile
+        tile.classList.replace("destructible", "floor"); // Change the class to floor
+        //tile.classList.add("floor"); // Keep it as a floor tile
         xp.textContent = parseInt(xp.textContent) + 10; // 10xp per brick
       } else if (map[row][col] === 3) {
         // If the hidden door is destroyed, reveal it
@@ -336,13 +297,3 @@ function gameLoop() {
 
 // Start the game loop
 gameLoopFrame = requestAnimationFrame(gameLoop);
-
-function winGame() {
-  xp.textContent = parseInt(xp.textContent) + 100; // 100xp for winning
-  document.getElementById("status").textContent =
-    "congratulations! you win! press esc to start a new game.";
-  gameStarted = false;
-  gamePaused = true;
-  pauseTimer();
-  listenForKeydown(); // Allow the player to start a new game
-}

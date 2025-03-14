@@ -44,6 +44,6 @@ export function resumeTimer() {
   if (!timerRunning) {
     lastTime = null; // Reset lastTime to avoid time jumps
     timerRunning = true;
-    timerFrame = requestAnimationFrame(timer);
+    timerFrame = requestAnimationFrame(timer().updateTimer);
   }
 }

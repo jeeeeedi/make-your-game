@@ -4,10 +4,10 @@ import { enoughIsEnough, gameOver } from "./stopGame.js";
 
 let playerLives = 5;
 const livesCounter = document.getElementById("lives");
+let player = document.getElementById("player");
 
 export function decreaseLives() {
-
-  blink();
+  blink(player);
 
   if (playerLives > 0) {
     playerLives--;
@@ -40,11 +40,15 @@ export function checkSpookyHug() {
   });
 }
 
-function blink(){
-  const player = document.getElementById("player");
-  player.classList.add("blink");
-  console.log(player)
-  setTimeout(() => {
-    player.classList.remove("blink");
-  }, 1000);
+export function blink(entity) {
+  entity.classList.add("blink");
+
+  // Remove the blink class after the animation ends
+  entity.addEventListener(
+    "animationend",
+    () => {
+      entity.classList.remove("blink");
+    },
+    { once: true }
+  );
 }

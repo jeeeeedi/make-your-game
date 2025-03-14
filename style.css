@@ -54,6 +54,7 @@ p {
   align-items: center;
   justify-content: center;
   position: relative;
+  font-size: 30px;
   /* border: 1px solid rgb(224, 224, 224); border looks weird after explosion */
 }
 
@@ -90,17 +91,12 @@ p {
   justify-content: center;
 }
 
-.bomb {
-  font-size: 30px;
-  animation: blink 0.15s infinite alternate;
-}
-
 @keyframes blink {
   0% {
     opacity: 1;
   }
   100% {
-    opacity: 0.6;
+    opacity: 0;
   }
 }
 
@@ -110,8 +106,7 @@ p {
 
 .explosion {
   font-size: 80px; /* Explosion emoji size */
-  animation: explode 0.5s ease-out forwards;
-  /* display: flex; */
+  /* animation: explode 0.5s ease-out forwards; */
   align-items: center;
   justify-content: center;
   z-index: 1;
@@ -166,11 +161,8 @@ footer p {
   padding-top: 40px;
   color: gray;
 }
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
 
 .blink {
-  animation: blink 0.5s ease infinite;
+  animation: blink 0.5s ease;
+  animation-iteration-count: 3;
 }
