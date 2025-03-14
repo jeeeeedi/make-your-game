@@ -6,6 +6,9 @@ let playerLives = 5;
 const livesCounter = document.getElementById("lives");
 
 export function decreaseLives() {
+
+  blink();
+
   if (playerLives > 0) {
     playerLives--;
   }
@@ -35,4 +38,13 @@ export function checkSpookyHug() {
       decreaseLives();
     }
   });
+}
+
+function blink(){
+  const player = document.getElementById("player");
+  player.classList.add("blink");
+  console.log(player)
+  setTimeout(() => {
+    player.classList.remove("blink");
+  }, 1000);
 }
