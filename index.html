@@ -1,84 +1,393 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bomberman Game</title>
-    <link rel="stylesheet" href="style.css" />
-    <link
-      rel="shortcut icon"
-      href="https://opengameart.org/sites/default/files/heart_6.png"
-    />
-  </head>
 
-  <body>
-    <div class="container">
-      <!-- Header -->
-      <header>
-        <h1>BOMBERMAN</h1>
-        <div id="status">press enter to start playing.</div>
-        <p>goal: exit the maze through the door that is hidden behind a destructible wall.</br>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bomberman Game</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="shortcut icon" href="https://opengameart.org/sites/default/files/heart_6.png" />
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <h1>BOMBERMAN</h1>
+      <div id="status">press enter to start playing.</div>
+      <p>goal: exit the maze through the door that is hidden behind a destructible wall.</br>
         avoid or kill spooks. every destroyed wall or killed spook will give you 00 XP.</p>
       </br>
-        <table class="scoreboard">
-          <tr>
-            <th>Lives</th>
-            <th>Time Left</th>
-            <th>XP</th>
-          </tr>
-          <tr>
-            <td id="lives">❤️❤️❤️❤️❤️</td>
-            <td id="time">01:00</td>
-            <td id="xp">00</td>
-          </tr>
-        </table>
-    </br>
-      </header>
-      <!-- Game Board -->
-      <div class="content">
-        <div id="game-board">
-          <div class="player" id="player">😇</div>
-        </div>
-      </div>
+      <table class="scoreboard">
+        <tr>
+          <th>Lives</th>
+          <th>Time Left</th>
+          <th>XP</th>
+        </tr>
+        <tr>
+          <td id="lives">❤️❤️❤️❤️❤️</td>
+          <td id="time">01:00</td>
+          <td id="xp">00</td>
+        </tr>
+      </table>
+      </br>
+    </header>
+    <!-- Game Board -->
+    <div class="content">
+      <div id="game-board">
+        <!-- Row 1 (All permanent walls) -->
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <!-- Row 2 (1st and last are permanent walls; inside are floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 3 (Alternate permanent walls and floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 4 (1st and last are permanent walls; inside are floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 5 (Alternate permanent walls and floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 6 (1st and last are permanent walls; inside are floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 7 (Alternate permanent walls and floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 8 (1st and last are permanent walls; inside are floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 9 (Alternate permanent walls and floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 10 (1st and last are permanent walls; inside are floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 11 (Alternate permanent walls and floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 12 (1st and last are permanent walls; inside are floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 13 (Alternate permanent walls and floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 14 (1st and last are permanent walls; inside are floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 15 (Alternate permanent walls and floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 16 (1st and last are permanent walls; inside are floors) -->
+        <div class="tile wall"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile floor"></div>
+        <div class="tile wall"></div>
+        <!-- Row 17 (All permanent walls) -->
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
+        <div class="tile wall"></div>
 
-      <!-- Footer -->
-      <footer>
-        <h2>Controls</h2>
-        <table class="instructions">
-          <tr>
-            <th>Key</th>
-            <th>Action</th>
-          </tr>
-          <tr>
-            <td>enter</td>
-            <td>starts the game and timer</td>
-          </tr>
-          <tr>
-            <td>x</td>
-            <td>drops a bomb on the current tile</td>
-          </tr>
-          <tr>
-            <td>left, right, up, down</td>
-            <td>moves the player left, right, up, or down, respectively</td>
-          </tr>
-          <tr>
-            <td>space</td>
-            <td>pauses the game or continues a paused game</td>
-          </tr>
-          <tr>
-            <td>esc</td>
-            <td>quits the current game and starts a new game</td>
-          </tr>
-        </table>
-        <p>
-          Bomberman by
-          <a href="https://www.linkedin.com/in/anastasia-suhareva-09599651/"
-            >Anastasia</a
-          >
-          and <a href="https://github.com/jeeeeedi">Jedi</a>
-        </p>
-      </footer>
+        <div class="player" id="player"></div>
+        <div class="spook" id="spook">👻</div>
+        <div class="door" id="door">🚪</div>
+        <div class="bomb" id="bomb">💣</div>
+        <div class="explosion" id="explosion">💥</div>
+
+      </div>
     </div>
-    <script type="module" src="game.js"></script>
-  </body>
+
+    <!-- Footer -->
+    <footer>
+      <h2>Controls</h2>
+      <table class="instructions">
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+        <tr>
+          <td>enter</td>
+          <td>starts the game and timer</td>
+        </tr>
+        <tr>
+          <td>x</td>
+          <td>drops a bomb on the current tile</td>
+        </tr>
+        <tr>
+          <td>left, right, up, down</td>
+          <td>moves the player left, right, up, or down, respectively</td>
+        </tr>
+        <tr>
+          <td>space</td>
+          <td>pauses the game or continues a paused game</td>
+        </tr>
+        <tr>
+          <td>esc</td>
+          <td>quits the current game and starts a new game</td>
+        </tr>
+      </table>
+      <p>
+        Bomberman by
+        <a href="https://www.linkedin.com/in/anastasia-suhareva-09599651/">Anastasia</a>
+        and <a href="https://github.com/jeeeeedi">Jedi</a>
+      </p>
+    </footer>
+  </div>
+  <script type="module" src="game.js"></script>
+</body>
+
 </html>
