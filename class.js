@@ -1,6 +1,10 @@
 export class Entity {
     constructor(id, row, col) {
         this.element = document.getElementById(id);
+        if (!this.element) {
+            console.error(`Element with ID "${id}" not found.`);
+            return;
+        }
         this.row = row;
         this.col = col;
         this.position = [row, col];
@@ -11,31 +15,35 @@ export class Entity {
     activate() {
         if (!this.active) {
             this.active = true;
-            this.element.style.opacity = 100;  // Show entity
+            this.element.style.opacity = '1';  // Show entity
             this.element.style.visibility = 'visible';  // Ensure it's visible
         }
     }
     deactivate() {
         if (this.active) {
             this.active = false;
-            this.element.style.opacity = 0;  // Hide entity (keep it in the layout, but invisible)
+            this.element.style.opacity = '0';  // Hide entity (keep it in the layout, but invisible)
             this.element.style.visibility = 'hidden';  // Make it non-interactive
         }
     }
     move(rowChange, colChange) {
-        if (!this.collide([this.row + rowChange, this.col + colChange])) {
-            this.row += rowChange;
-            this.col += colChange;
-            this.style.transform = `translate(${this.col * 40}px, ${this.row * 40}px)`;
-            //this.updatePosition(); // Update position
+        let newRow = this.row + rowChange;
+        let newCol = this.col + colChange;
+
+        if (!this.collide([newRow, newCol])) {
+            this.row = newRow;
+            this.col = newCol;
+            this.element.style.transform = `translate(${this.col * 40}px, ${this.row * 40}px)`;
         }
     }
     collide(position) {
         return this.row === position[0] && this.col === position[1];
     }
-    /* updatePosition() {
-        this.style.transform = `translate(${this.col * 40}px, ${this.row * 40}px)`;
-    } */
+    updatePosition(row, col) {
+        this.row = row;
+        this.col = col;
+        this.element.style.gridArea = `${this.row} / ${this.col}`;
+    }
 }
 
 export class Player extends Entity {
@@ -48,24 +56,28 @@ export class Player extends Entity {
 export class Spook extends Entity {
     constructor(row, col) {
         super('spook', row, col);
+        this.element.textContent = '👻';
     }
 }
 
 export class Bomb extends Entity {
     constructor(row, col) {
         super('bomb', row, col);
+        this.element.textContent = '💣';
     }
 }
 
 export class Explosion extends Entity {
     constructor(row, col) {
         super('explosion', row, col);
+        this.element.textContent = '💥';
     }
 }
 
 export class Door extends Entity {
     constructor(row, col) {
         super('door', row, col);
+        this.element.textContent = '🚪';
     }
 }
 
@@ -74,18 +86,3 @@ export class Floor extends Entity {
         super('floor', row, col);
     }
 }
-
-export class Destructible extends Entity {
-    constructor(row, col) {
-        super('destructible', row, col);
-    }
-}
-
-//instantiate entities
-export let player = new Player(9, 9); // Player starts at center
-export let spook = new Spook(0, 0);
-export let bomb = new Bomb(0, 0);
-export let explosion = new Explosion(0, 0);
-export let door = new Door(0, 0);
-export let floor = new Floor(0, 0);
-export let destructible = new Destructible(0, 0);

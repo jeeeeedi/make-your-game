@@ -1,4 +1,4 @@
-import { player, spook, bomb, explosion, door, floor, destructible } from "./class.js"
+import { player, spook, bomb, explosion, door, floor } from "./game.js"
 
 //initialize game states
 export let running = false;
@@ -13,23 +13,52 @@ export function startGame() {
     paused = false;
 
     player.activate();
-    //deactivate(spook, bomb, explosion);
+    player.updatePosition(9, 9);
+
     addDestructibles();
+    assignDoorPosition();
+    //door.activate();
     console.log('STATUS: startGame. running: ', running, ' | paused: ', paused)
 }
 
+let total = 45; // total destructibles to be added
+
 function addDestructibles() {
-    let total = 50; // total destructibles to be added
-    let destructiblePos = [];
-    let placed = 0;
+    let built = 0;
 
-    while (placed < total) {
-        let randomRow = Math.floor(Math.random() * gridSize);
-        let randomCol = Math.floor(Math.random() * gridSize);
+    // Select random floor elements
+    const randomFloorTiles = Array.from(document.querySelectorAll('#game-board > .floor'))
+        .sort(() => 0.5 - Math.random());
 
-        if (!player.collide) {
-            destructiblePos.push({ row: randomRow, col: randomCol });
-            placed++;
+    randomFloorTiles.forEach((tile) => {
+        if (built >= total) return;
+
+        // Exclude center (player start position)
+        if (tile.id !== 'floor center') {
+            // Change the ID and class of the floor element to destructible
+            tile.id = `destructible${built + 1}`;
+            tile.classList.add('destructible');
+            tile.classList.remove('floor');
+
+            built++;
         }
+    });
+}
+
+function assignDoorPosition() {
+    // Select a random floor tile
+    let randomtileID = `destructible${Math.floor(Math.random() * total) + 1}`;
+    let randomTileElement = document.getElementById(randomtileID);
+
+    // Calculate row and column
+    if (randomTileElement) {
+        let tileIndex = Array.from(randomTileElement.parentNode.children).indexOf(randomTileElement);
+        let row = Math.floor(tileIndex / gridSize);
+        let col = tileIndex % gridSize;
+        door.position = [row + 1, col + 1];
+        door.updatePosition(row + 1, col + 1);
+        console.log(`Door is at id = ${randomtileID} | Row: ${row + 1}, Column: ${col + 1}`);
+    } else {
+        console.log(`Tile with ID ${randomtileID} not found.`);
     }
 }
