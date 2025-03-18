@@ -1,4 +1,4 @@
-import { map, tileSize, gridSize } from "./game.js";
+import { map, tileSize, gridSize } from "./states.js";
 import { checkSpookyHug } from "./lives.js";
 import { gameOver } from "./stopGame.js";
 import { gamePaused } from "./stateMgr.js";

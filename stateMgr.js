@@ -1,11 +1,7 @@
 import { timer, pauseTimer, resumeTimer } from "./timer.js";
 import { callTheSpooks, movingSpooks } from "./spooks.js";
-import {
-  createMap,
-  updatePlayerPosition,
-  gameBoard,
-  listenForKeydown,
-} from "./game.js";
+import { gameBoard } from "./states.js";
+import { listenForKeys } from "./input.js";
 import { enoughIsEnough } from "./stopGame.js";
 
 export let gameStarted = false;
@@ -22,7 +18,7 @@ export function quitGame() {
   }
 }
 
-export function startGame() {
+/* export function startGame() {
   if (gameStarted) return; // Prevent restarting if already started
   gameStarted = true;
   gamePaused = false; // Ensure game starts unpaused
@@ -39,7 +35,7 @@ export function startGame() {
   callTheSpooks(gameBoard); // Start spawning spooks
   console.log("Ready to play!");
 }
-
+ */
 export function togglePause() {
   if (!gameStarted) return; // Do nothing if the game hasn't started
 

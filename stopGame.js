@@ -1,6 +1,7 @@
-import { listenForKeydown, gameLoopFrame } from "./game.js";
+import { gameLoopFrame } from "./states.js";
 import { spawnInterval, spooks } from "./spooks.js";
 import { timerFrame } from "./timer.js";
+import { listenForKeys } from "./input.js";
 
 export let gameOver = false;
 // Stop the game by clearing intervals and stopping the loop
@@ -29,7 +30,7 @@ export function enoughIsEnough() {
   });
 
   // Disable key
-  document.removeEventListener("keydown", listenForKeydown);
+  document.removeEventListener("keydown", listenForKeys);
 
   alert("Game over! Do you want to try once again?");
   location.reload(); // refresh the page

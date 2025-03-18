@@ -1,34 +1,58 @@
-import { running, paused, startGame } from "./states.js";
-import { player, spook, bomb, explosion, door, floor/*, destructible */} from "./game.js"
+import { map, running, paused, startGame, placeBomb } from "./states.js";
+import { player, spook, bomb, explosion, door, floor } from "./game.js";
 
 export function listenForKeys() {
-    document.addEventListener("keydown", (e) => {
-        console.log(`Key pressed: ${e.key}`);
-        switch (e.key) {
-            case 'Enter':
-                if (!running) startGame();
-                break;
-            case 'Escape':
-                if (running && !paused) quitGame();
-                break;
-            case ' ':
-                if (running) {
-                    e.preventDefault(); // Prevent scrolling
-                    togglePause();
-                }
-                break;
-            default:
-                if (running && !paused && player.row >= 1 && player.row <= 17 && player.col >= 1 && player.col <= 17) {
-                    console.log(`Player position before move: row=${player.row}, col=${player.col}`); 
-                    switch (e.key) {
-                        case 'ArrowUp': player.move(-1, 0); break;
-                        case 'ArrowDown': player.move(1, 0); break;
-                        case 'ArrowLeft': player.move(0, -1); break;
-                        case 'ArrowRight': player.move(0, 1); break;
-                    }
-                    console.log(`Player position after move: row=${player.row}, col=${player.col}`); 
-                }
-                break;
-        }
-    });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      startGame();
+    } else if (e.key === "Escape") {
+      quitGame();
+    } else if (e.key === " ") {
+      e.preventDefault(); // Prevent spacebar from scrolling the page
+      togglePause();
+    } else if (!paused && running) {
+      handleGameControls(e);
+    }
+  });
+}
+// Handle movement and actions only if the game is running
+function handleGameControls(e) {
+  let rowChange = 0;
+  let colChange = 0;
+
+  if (e.key === "ArrowUp") {
+    rowChange = -1;
+    e.preventDefault(); // Prevent scrolling the page
+  }
+  if (e.key === "ArrowDown") {
+    rowChange = 1;
+    e.preventDefault(); // Prevent scrolling the page
+  }
+  if (e.key === "ArrowLeft") {
+    colChange = -1;
+    e.preventDefault(); // Prevent scrolling the page
+  }
+  if (e.key === "ArrowRight") {
+    colChange = 1;
+    e.preventDefault(); // Prevent scrolling the page
+  }
+
+  // Ensure the new position is within the map boundaries
+  const newRow = player.row + rowChange;
+  const newCol = player.col + colChange;
+
+  if (newRow >= 0 && newRow < 17 && newCol >= 0 && newCol < 17) {
+    if (map[newRow][newCol] === 0 || map[newRow][newCol] === 3) {
+      player.move(rowChange, colChange);
+
+      // Check if the player has moved to the door's position
+      if (map[newRow][newCol] === 3) {
+        winGame();
+      }
+    }
+  }
+
+  if (e.key === "x" || e.key === "X") {
+    placeBomb(player.row, player.col);
+  }
 }

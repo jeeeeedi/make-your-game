@@ -1,10 +1,9 @@
-import { playerPos } from "./game.js";
 import { spooks } from "./spooks.js";
 import { enoughIsEnough, gameOver } from "./stopGame.js";
+import { player } from "./game.js";
 
 let playerLives = 5;
 const livesCounter = document.getElementById("lives");
-let player = document.getElementById("player");
 
 export function decreaseLives() {
   blink(player);
@@ -28,13 +27,13 @@ function updateLivesCounter() {
     playerLives > 0 ? "❤️".repeat(playerLives) : "🫶🏼";
 }
 
-export function isAtSamePosition(playerPos, spookPos) {
-  return playerPos.row === spookPos.row && playerPos.col === spookPos.col;
+export function isAtSamePosition(player, spookPos) {
+  return player.row === spookPos.row && player.col === spookPos.col;
 }
 
 export function checkSpookyHug() {
   spooks.forEach((spook) => {
-    if (isAtSamePosition(playerPos, spook.position)) {
+    if (isAtSamePosition(player, spook.position)) {
       decreaseLives();
     }
   });
