@@ -1,5 +1,5 @@
 import { running, paused, startGame } from "./states.js";
-import { player, spook, bomb, explosion, door, floor/*, destructible */} from "./game.js"
+import { player, spook, bomb, explosion, door, /*floor , destructible */} from "./game.js"
 
 export function listenForKeys() {
     document.addEventListener("keydown", (e) => {

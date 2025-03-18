@@ -1,3 +1,5 @@
+import { entities } from "./game.js";
+
 export class Entity {
     constructor(id, row, col) {
         this.element = document.getElementById(id);
@@ -11,6 +13,10 @@ export class Entity {
         this.element.style.opacity = 0;
         this.element.style.visibility = 'hidden';
         this.active = false;
+        entities.push(this);
+        if (this.element.classList.contains('wall') || this.element.classList.contains('floor')){
+            this.activate();
+        };
     }
     activate() {
         if (!this.active) {
@@ -32,7 +38,7 @@ export class Entity {
 
         console.log(`Attempting to move to: row=${newRow}, col=${newCol}`);
 
-        if (!this.collide([newRow, newCol])) {
+        if (!this.collide(newRow, newCol)) {
             this.row = newRow;
             this.col = newCol;
             this.element.style.gridArea = `${this.row} / ${this.col}`;
@@ -41,8 +47,20 @@ export class Entity {
             console.log(`Collision detected at: row=${newRow}, col=${newCol}`); // Log collision
         }
     }
-    collide(position) {
-        return this.row === position[0] && this.col === position[1];
+
+    // The only identifier of the empty floor tile is backgound color
+    // It have to be changed when we change colors or add emoji for the white floor tile.
+    collide(newRow, newCol) {
+        for (let entity of entities) {
+            if (entity !== this && entity.row === newRow && entity.col === newCol && entity.active) {
+                const backgroundColor = window.getComputedStyle(entity.element).backgroundColor;
+                if (backgroundColor !== 'rgb(255, 255, 255)') { // Assuming white is the floor color
+                    console.log("collide");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     updatePosition(row, col) {
         this.row = row;
@@ -88,6 +106,13 @@ export class Door extends Entity {
 
 export class Floor extends Entity {
     constructor(row, col) {
-        super('floor', row, col);
+        super(`floor-${row}-${col}`, row, col);
+    }
+}
+
+export class Wall extends Entity {
+    constructor(row, col) {
+        super(`wall-${row}-${col}`, row, col);
+        //this.element.textContent = '🪨'//
     }
 }

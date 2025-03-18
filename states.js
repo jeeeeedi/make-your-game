@@ -1,4 +1,4 @@
-import { player, spook, bomb, explosion, door, floor } from "./game.js"
+import { player, spook, bomb, explosion, door, /*floor*/ } from "./game.js"
 
 //initialize game states
 export let running = false;
@@ -34,7 +34,8 @@ function addDestructibles() {
         if (built >= total) return;
 
         // Exclude center (player start position)
-        if (tile.id !== 'floor center') {
+
+        if (tile.id !== 'floor-9-9') {
             // Change the ID and class of the floor element to destructible
             tile.id = `destructible${built + 1}`;
             tile.classList.add('destructible');
