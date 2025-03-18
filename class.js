@@ -30,10 +30,15 @@ export class Entity {
         let newRow = this.row + rowChange;
         let newCol = this.col + colChange;
 
+        console.log(`Attempting to move to: row=${newRow}, col=${newCol}`);
+
         if (!this.collide([newRow, newCol])) {
             this.row = newRow;
             this.col = newCol;
-            this.element.style.transform = `translate(${this.col * 40}px, ${this.row * 40}px)`;
+            this.element.style.gridArea = `${this.row} / ${this.col}`;
+            console.log(`Moved to: row=${this.row}, col=${this.col}`);
+        }else {
+            console.log(`Collision detected at: row=${newRow}, col=${newCol}`); // Log collision
         }
     }
     collide(position) {
