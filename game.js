@@ -133,6 +133,29 @@ player.classList.add("player");
 player.textContent = "😇";
 gameBoard.appendChild(player); */
 
+let frameIndex = 0;
+const totalFrames = 6; // Number of frames in the sprite sheet
+const frameWidth = 100; // Width of each frame
+let frameCounter = 0;
+const frameSpeed = 10; // Control speed (higher = slower)
+
+function animateSprite() {
+  frameCounter++;
+
+// Only change frame when frameCounter reaches frameSpeed
+if (frameCounter >= frameSpeed) {
+  frameIndex = (frameIndex + 1) % totalFrames;
+  const offsetX = frameIndex * frameWidth;
+  player.style.backgroundPosition = `-${offsetX}px 0`;
+  
+  frameCounter = 0; // Reset counter
+}
+  
+  requestAnimationFrame(animateSprite);
+}
+
+animateSprite();
+
 //creates the divs for the game board
 export function createMap() {
   gameBoard.textContent = "";

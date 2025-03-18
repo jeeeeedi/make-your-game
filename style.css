@@ -89,6 +89,17 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: movePNG 2s infinite alternate ease-in-out;
+  background-image: url('Walk.png');
+}
+
+@keyframes movePNG {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-20px) rotate(5deg);
+  }
 }
 
 @keyframes blink {
