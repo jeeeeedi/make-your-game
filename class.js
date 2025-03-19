@@ -1,19 +1,23 @@
 import { entities } from "./game.js";
 
+export const gameBoard = document.getElementById('game-board');
+
 export class Entity {
     constructor(id, row, col) {
-        this.element = document.getElementById(id);
-        if (!this.element) {
-            console.error(`Element with ID "${id}" not found.`);
-            return;
-        }
+        this.element = document.createElement("div");
+        this.element.id = id;
+        this.element.classList.add(`${id}`);
+        gameBoard.appendChild(this.element);
+        // if (!this.element) {
+        //     console.error(`Element with ID "${id}" not found.`);
+        //     return;
+        // }
         this.row = row;
         this.col = col;
         this.position = [row, col];
         this.element.style.opacity = 0;
         this.element.style.visibility = 'hidden';
         this.active = false;
-        entities.push(this);
         if (this.element.classList.contains('wall') || this.element.classList.contains('floor')){
             this.activate();
         };
@@ -36,32 +40,19 @@ export class Entity {
         let newRow = this.row + rowChange;
         let newCol = this.col + colChange;
 
-        console.log(`Attempting to move to: row=${newRow}, col=${newCol}`);
+        console.log(`Attempting to move to: row=${newRow}, col=${newCol} to ${entities.floor.row}, ${entities.floor.col}`);
 
-        if (!this.collide(newRow, newCol)) {
+        const targetEntity = entities.all.find(entity => entity.row === newRow && entity.col === newCol);
+        if (targetEntity && targetEntity.element.classList.contains('floor')) {
             this.row = newRow;
             this.col = newCol;
             this.element.style.gridArea = `${this.row} / ${this.col}`;
             console.log(`Moved to: row=${this.row}, col=${this.col}`);
-        }else {
+        } else {
             console.log(`Collision detected at: row=${newRow}, col=${newCol}`); // Log collision
         }
     }
 
-    // The only identifier of the empty floor tile is backgound color
-    // It have to be changed when we change colors or add emoji for the white floor tile.
-    collide(newRow, newCol) {
-        for (let entity of entities) {
-            if (entity !== this && entity.row === newRow && entity.col === newCol && entity.active) {
-                const backgroundColor = window.getComputedStyle(entity.element).backgroundColor;
-                if (backgroundColor !== 'rgb(255, 255, 255)') { // Assuming white is the floor color
-                    console.log("collide");
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     updatePosition(row, col) {
         this.row = row;
         this.col = col;
@@ -106,13 +97,13 @@ export class Door extends Entity {
 
 export class Floor extends Entity {
     constructor(row, col) {
-        super(`floor-${row}-${col}`, row, col);
+        super(`floor`, row, col);
     }
 }
 
 export class Wall extends Entity {
     constructor(row, col) {
-        super(`wall-${row}-${col}`, row, col);
+        super(`wall`, row, col);
         //this.element.textContent = '🪨'//
     }
 }

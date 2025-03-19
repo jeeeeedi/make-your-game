@@ -1,4 +1,4 @@
-import { player, spook, bomb, explosion, door, /*floor*/ } from "./game.js"
+import { entities } from "./game.js"
 
 //initialize game states
 export let running = false;
@@ -12,12 +12,12 @@ export function startGame() {
     running = true;
     paused = false;
 
-    player.activate();
-    player.updatePosition(9, 9);
+    entities.player.activate();
+    entities.player.updatePosition(9, 9);
+    console.log(entities.player)
 
     addDestructibles();
     assignDoorPosition();
-    //door.activate();
     console.log('STATUS: startGame. running: ', running, ' | paused: ', paused)
 }
 
@@ -35,7 +35,7 @@ function addDestructibles() {
 
         // Exclude center (player start position)
 
-        if (tile.id !== 'floor-9-9') {
+        if (tile.id !== 'floor-center') {
             // Change the ID and class of the floor element to destructible
             tile.id = `destructible${built + 1}`;
             tile.classList.add('destructible');
@@ -56,10 +56,51 @@ function assignDoorPosition() {
         let tileIndex = Array.from(randomTileElement.parentNode.children).indexOf(randomTileElement);
         let row = Math.floor(tileIndex / gridSize);
         let col = tileIndex % gridSize;
-        door.position = [row + 1, col + 1];
-        door.updatePosition(row + 1, col + 1);
+        entities.door.position = [row + 1, col + 1];
+        entities.door.updatePosition(row + 1, col + 1);
         console.log(`Door is at id = ${randomtileID} | Row: ${row + 1}, Column: ${col + 1}`);
     } else {
         console.log(`Tile with ID ${randomtileID} not found.`);
     }
 }
+
+export function placeBomb(row, col) {
+    console.log(`bomb! at ${row} ${col}`)
+
+  entities.bomb.activate();
+  entities.bomb.updatePosition(row, col);
+  blink(entities.bomb);
+
+  // Add a pause before activating the explosion using requestAnimationFrame
+  let start;
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    const progress = timestamp - start;
+    if (progress < 1000) { // 1000 milliseconds = 1 second delay
+      requestAnimationFrame(step);
+    } else {
+      entities.explosion.activate();
+      console.log(entities.explosion.element)
+      entities.explosion.updatePosition(row, col);
+      blink(entities.explosion);
+
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+export function blink(entity) {
+    entity.element.classList.add("blink");
+  
+    // Remove the blink class after the animation ends
+    entity.element.addEventListener(
+      "animationend",
+      () => {
+        console.log(entities.explosion.element)
+        entity.element.classList.remove("blink");
+        entity.deactivate();
+      },
+      { once: true }
+    );
+  }
+  
