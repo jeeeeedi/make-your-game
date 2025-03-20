@@ -1,5 +1,6 @@
 import { entities } from "./game.js"
 
+
 //initialize game states
 export let running = false;
 export let paused = false;
@@ -15,6 +16,7 @@ export function startGame() {
     entities.player.activate();
     entities.player.updatePosition(9, 9);
     console.log(entities.player)
+    activateSpooksOneByOne();
 
     addDestructibles();
     assignDoorPosition();
@@ -104,3 +106,12 @@ export function blink(entity) {
     );
   }
   
+  function activateSpooksOneByOne() {
+    const spooks = entities.spooks;
+    spooks.forEach((spook, index) => {
+        setTimeout(() => {
+            spook.activate();
+            console.log(`Spook ${index + 1} activated at row=${spook.row}, col=${spook.col}`);
+        }, index * 1000); // 1000 milliseconds = 1 second delay between each activation
+    });
+}

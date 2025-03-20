@@ -1,5 +1,5 @@
 export const entities = {
-    all: []
+    all: [],
 };
 
 console.log(entities);
@@ -40,6 +40,22 @@ export function createMap() {
     entities.door = new Door(0, 0);
     entities.all.push(entities.player, entities.spook, entities.bomb, entities.explosion, entities.door);
 }
+
+export const initializeSpooks = () => {
+    const spooks = [];
+    while (spooks.length < 6) {
+        const row = Math.floor(Math.random() * 15) + 2; // Random row between 2 and 16
+        const col = Math.floor(Math.random() * 15) + 2; // Random col between 2 and 16
+        const targetEntity = entities.all.find(entity => entity.row === row && entity.col === col);
+        if (targetEntity && targetEntity.element.classList.contains('floor')) {
+            const spook = new Spook(row, col);
+            spooks.push(spook);
+        }
+    }
+    entities.spooks = spooks; // Store the spooks in the entities object
+    return spooks;
+};
+
 
 createMap();
 console.log(entities);
