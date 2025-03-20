@@ -3,9 +3,9 @@ export const entities = {
 };
 
 console.log(entities);
-
+import { setupMenu } from './menu.js';
 import { Player, Spook, Bomb, Explosion, Door, Floor, Wall, Destructible, gameBoard } from './class.js';
-import { startGame } from './states.js';
+import { startGame, checkCollisions } from './states.js';
 import { listenForKeys } from './input.js';
 
 const gridSize = 17;
@@ -50,9 +50,9 @@ export function createMap() {
       const spook = new Spook(row, col);
       spook.updatePosition(row, col);
       console.log(spook);
-      spooks.push(spook);
-      entities.all.push(spook);
-    }
+    spooks.push(spook);
+    entities.all.push(spook);
+  }
   }
   entities.spooks = spooks; // Store the spooks in the entities object
 }
@@ -115,4 +115,5 @@ function assignDoorPosition() {
 createMap();
 listenForKeys();
 startGame(); // Start the game
-//setTimeout(activateSpooksOneByOne, 0)
+setTimeout(activateSpooksOneByOne, 0)
+setInterval(checkCollisions, 100); 

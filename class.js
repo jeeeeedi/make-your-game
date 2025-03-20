@@ -1,4 +1,5 @@
 import { entities } from "./game.js";
+import { checkCollisions } from "./states.js";
 
 export const gameBoard = document.getElementById('game-board');
 
@@ -18,7 +19,7 @@ export class Entity {
         this.element.style.opacity = 0;
         this.element.style.visibility = 'hidden';
         this.active = false;
-        if (this.element.classList.contains('wall') || this.element.classList.contains('floor')){
+        if (this.element.classList.contains('wall') || this.element.classList.contains('floor')) {
             this.activate();
         };
     }
@@ -39,19 +40,21 @@ export class Entity {
     move(rowChange, colChange) {
         let newRow = this.row + rowChange;
         let newCol = this.col + colChange;
-
-        console.log(`Attempting to move to: row=${newRow}, col=${newCol} to ${entities.floor.row}, ${entities.floor.col}`);
-
         const targetEntity = entities.all.find(entity => entity.row === newRow && entity.col === newCol);
         if (targetEntity && targetEntity.element.classList.contains('floor')) {
             this.row = newRow;
             this.col = newCol;
             this.element.style.gridArea = `${this.row} / ${this.col}`;
             console.log(`Moved to: row=${this.row}, col=${this.col}`);
+            checkCollisions();
         } else {
             console.log(`Collision detected at: row=${newRow}, col=${newCol}`); // Log collision
+            if (this instanceof Spook) {
+                this.randomMove(); // Retry movement in a different direction
+            }
         }
     }
+
 
     updatePosition(row, col) {
         this.row = row;
@@ -80,8 +83,17 @@ export class Spook extends Entity {
             { rowChange: 0, colChange: -1 }, // Left
             { rowChange: 0, colChange: 1 }   // Right
         ];
-        const randomDirection = directions[Math.floor(Math.random() * directions.length)];
-        this.move(randomDirection.rowChange, randomDirection.colChange);
+        let canMove = false;
+        while (!canMove) {
+            const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+            const newRow = this.row + randomDirection.rowChange;
+            const newCol = this.col + randomDirection.colChange;
+            const targetEntity = entities.all.find(entity => entity.row === newRow && entity.col === newCol);
+            if (targetEntity && targetEntity.element.classList.contains('floor')) {
+                this.move(randomDirection.rowChange, randomDirection.colChange);
+                canMove = true;
+            }
+        }
     }
 }
 

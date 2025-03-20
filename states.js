@@ -37,9 +37,9 @@ export function placeBomb(row, col) {
       requestAnimationFrame(step);
     } else {
       entities.explosion.activate();
-      console.log(entities.explosion.element)
       entities.explosion.updatePosition(row, col);
       blink(entities.explosion);
+      entities.explosion.deactivate();
 
     }
   }
@@ -48,19 +48,30 @@ export function placeBomb(row, col) {
 }
 
 export function blink(entity) {
-  entity.element.classList.add("blink");
+    entity.element.classList.add("blink");
+  
+    // Remove the blink class after the animation ends
+    entity.element.addEventListener(
+      "animationend",
+      () => {
+        entity.element.classList.remove("blink");
+      },
+      { once: true }
+    );
+  }
 
-  // Remove the blink class after the animation ends
-  entity.element.addEventListener(
-    "animationend",
-    () => {
-      //console.log(entities.explosion.element)
-      entity.element.classList.remove("blink");
-      entity.deactivate();
-    },
-    { once: true }
-  );
-}
+  export function decreaseLife() {
+  console.log('***Life decreased***', new Date);
+  }
+
+  export function checkCollisions() {
+    entities.spooks.forEach((spook) => {
+      if (entities.player.row === spook.row && entities.player.col === spook.col) {
+        decreaseLife();
+        blink(entities.player);
+      }
+    });
+  }
 
 export function destroySurroundings(row, col) {
   console.log('destroying...')

@@ -159,10 +159,19 @@ footer p {
   color: gray;
 }
 
+
+
 .blink {
   animation: blink 0.5s ease;
   animation-iteration-count: 3;
 }
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 @keyframes spook-animation {
   from { background-position: 0 0; }
   to { background-position: -300px 0; } /* Adjust based on sprite sheet */
