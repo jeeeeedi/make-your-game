@@ -145,7 +145,7 @@ function assignDoorPosition() {
   }
 }
 
-function checkCollisionsLoop() {
+export function checkCollisionsLoop() {
     checkCollisions();
     requestAnimationFrame(checkCollisionsLoop);
   }
