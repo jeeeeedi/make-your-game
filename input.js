@@ -19,27 +19,25 @@ export function listenForKeys() {
         if (!running) startGame();
         break;
       case "Escape":
-          pauseTimer();
+        pauseTimer();
+        togglePaused();
+        if (confirm("Are you sure you want to quit the current game?")) {
+          location.reload();
+        } else {
           togglePaused();
-          cancelAnimationFrame(activateSpooksOneByOne);
-          if (confirm("Are you sure you want to quit the current game?")) {
-            location.reload();
-          } else {
-            togglePaused(); // Toggle the paused state
-            resumeTimer(); // Resume the timer
-          }
+          resumeTimer();
+          activateSpooksOneByOne();
+        }
         break;
       case " ":
         if (running) {
           e.preventDefault(); // Prevent scrolling
+          togglePaused();
           if (paused) {
-            togglePaused(); // Toggle the paused state
-            resumeTimer(); // Resume the timer
+            pauseTimer();
           } else {
-            cancelAnimationFrame(activateSpooksOneByOne);
-
-            pauseTimer(); // Pause the timer
-            togglePaused(); // Toggle the paused state
+            resumeTimer();
+            activateSpooksOneByOne();
           }
         }
         break;

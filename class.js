@@ -37,7 +37,7 @@ export class Entity {
     }
   }
   move(rowChange, colChange) {
-    if (!running && paused) return;
+    if (!running || paused) return;
     let newRow = this.row + rowChange;
     let newCol = this.col + colChange;
     const targetEntity = entities.all.find(
@@ -47,13 +47,9 @@ export class Entity {
       this.row = newRow;
       this.col = newCol;
       this.element.style.gridArea = `${this.row} / ${this.col}`;
-      //console.log(`Moved to: row=${this.row}, col=${this.col}`);
       checkCollisions();
-    } else {
-      //console.log(`Collision detected at: row=${newRow}, col=${newCol}`); // Log collision
-      if (this instanceof Spook) {
-        this.randomMove(); // Retry movement in a different direction
-      }
+    } else if (this instanceof Spook) {
+      this.randomMove(); // Retry movement in a different direction
     }
   }
 
@@ -83,7 +79,26 @@ export class Spook extends Entity {
   constructor(row, col) {
     super("spook", row, col);
     this.element.textContent = "👻";
+    this.movementInterval = null;
   }
+
+  startMoving() {
+    if (!this.movementInterval) {
+      this.movementInterval = setInterval(() => {
+        if (!paused && running) {
+          this.randomMove();
+        }
+      }, 800);
+    }
+  }
+
+  stopMoving() {
+    if (this.movementInterval) {
+      clearInterval(this.movementInterval);
+      this.movementInterval = null;
+    }
+  }
+
   randomMove() {
     const directions = [
       { rowChange: -1, colChange: 0 }, // Up
@@ -92,7 +107,8 @@ export class Spook extends Entity {
       { rowChange: 0, colChange: 1 }, // Right
     ];
     let canMove = false;
-    while (!canMove) {
+    let attempts = 0;
+    while (!canMove && attempts < 4) {
       const randomDirection =
         directions[Math.floor(Math.random() * directions.length)];
       const newRow = this.row + randomDirection.rowChange;
@@ -104,6 +120,7 @@ export class Spook extends Entity {
         this.move(randomDirection.rowChange, randomDirection.colChange);
         canMove = true;
       }
+      attempts++;
     }
   }
 }

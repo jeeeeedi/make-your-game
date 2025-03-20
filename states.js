@@ -22,6 +22,21 @@ export let running = false;
 export let paused = false;
 export function togglePaused() {
   paused = !paused;
+  if (paused) {
+    // Stop all spook movements when pausing
+    entities.spooks.forEach(spook => {
+      if (spook.active) {
+        spook.stopMoving();
+      }
+    });
+  } else {
+    // Resume all spook movements when unpausing
+    entities.spooks.forEach(spook => {
+      if (spook.active) {
+        spook.startMoving();
+      }
+    });
+  }
 }
 
 export const gridSize = 17;
@@ -37,11 +52,22 @@ export function startGame() {
   document.getElementById("status").textContent =
     "game running. press spacebar to pause the game or esc to quit.";
   entities.player.updatePosition(9, 9);
+  entities.player.activate(); // Activate the player
 
-  if (!paused) {
-    delay(500, activateSpooksOneByOne);
+  // Show menu button
+  const menuButton = document.getElementById("menu-button");
+  menuButton.style.display = "block";
+  menuButton.style.position = "fixed";
+  menuButton.style.top = "20px";
+  menuButton.style.right = "20px";
+  menuButton.style.zIndex = "1001";
+  document.getElementById("start-game-btn").disabled = true;
+
+  // Start the game systems
+  delay(500, () => {
+    activateSpooksOneByOne();
     requestAnimationFrame(checkCollisionsLoop);
-  }
+  });
   timer();
   console.log("STATUS: startGame. running: ", running, " | paused: ", paused);
 }

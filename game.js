@@ -24,6 +24,7 @@ import {
   delay,
 } from "./states.js";
 import { listenForKeys } from "./input.js";
+import { setupMenu } from "./menu.js";
 
 const gridSize = 17;
 
@@ -66,8 +67,8 @@ export function createMap() {
   );
   addDestructibles();
   assignDoorPosition();
+  
   // Initialize and add 6 spook entities
-
   const spooks = [];
   while (spooks.length < 6) {
     const row = Math.floor(Math.random() * 15) + 2; // Random row between 2 and 16
@@ -75,37 +76,53 @@ export function createMap() {
     const targetEntity = entities.all.find(
       (entity) => entity.row === row && entity.col === col
     );
-    //console.log("targetentity: ", targetEntity);
     if (
       targetEntity instanceof Floor &&
       targetEntity.element.classList.contains("floor")
     ) {
       const spook = new Spook(row, col);
       spook.updatePosition(row, col);
-      //console.log(spook);
       spooks.push(spook);
       entities.all.push(spook);
     }
   }
   entities.spooks = spooks; // Store the spooks in the entities object
+
+  // Deactivate player and spooks at start
+  entities.player.deactivate();
+  entities.spooks.forEach(spook => spook.deactivate());
 }
 
 export function activateSpooksOneByOne() {
   if (!running || paused) return;
-
-  entities.spooks.forEach((spook, index) => {
-    delay(index * 8000, () => {
-      spook.activate();
-      console.log(
-        `Spook at row=${spook.row}, col=${spook.col} activated`,
-        new Date()
-      );
-      function moveSpook() {
-        spook.randomMove();
-        delay(800, moveSpook);
-      }
-      if (!paused && running) moveSpook();
+  
+  // Check if any menu is visible
+  const menu = document.getElementById('game-menu');
+  const controlsWindow = document.getElementById('controls-window');
+  if (menu?.style.display === 'flex' || controlsWindow?.style.display === 'flex') {
+    // If any menu is visible, deactivate all spooks
+    entities.spooks.forEach(spook => {
+      spook.deactivate();
+      spook.stopMoving();
     });
+    return;
+  }
+
+  // Only activate spooks if no menu is visible
+  entities.spooks.forEach((spook, index) => {
+    if (!spook.active) {  // Only activate spooks that aren't already active
+      delay(index * 8000, () => {
+        // Check if menus are still not visible before activating
+        if (!(menu?.style.display === 'flex' || controlsWindow?.style.display === 'flex')) {
+          spook.activate();
+          spook.startMoving();
+          console.log(
+            `Spook at row=${spook.row}, col=${spook.col} activated`,
+            new Date()
+          );
+        }
+      });
+    }
   });
 }
 
@@ -160,7 +177,7 @@ export function checkCollisionsLoop() {
 }
 
 createMap();
-//startGame();
+setupMenu(); // Initialize the menu
 listenForKeys();
 
 export function gameLoop() {
@@ -173,7 +190,25 @@ export function gameLoop() {
 
 // Start the game loop
 requestAnimationFrame(gameLoop);
-/* 
-requestAnimationFrame(() => activateSpooksOneByOne());
-requestAnimationFrame(checkCollisionsLoop);
- */
+
+export function resetGame() {
+    // Reset player
+    entities.player.deactivate();
+    entities.player.row = 0;
+    entities.player.col = 0;
+    entities.player.element.style.display = 'none';
+
+    // Reset spooks
+    entities.spooks.forEach(spook => {
+        spook.deactivate();
+        spook.element.style.display = 'none';
+    });
+    entities.spooks = [];
+
+    // Reset game state using the proper state management functions
+    if (running) {
+        togglePaused();
+    }
+    gameTime = 0;
+    updateTimer();
+}
