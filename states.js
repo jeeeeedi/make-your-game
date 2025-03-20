@@ -1,5 +1,15 @@
-import { entities, activateSpooksOneByOne } from "./game.js"
-
+import { entities, activateSpooksOneByOne } from "./game.js";
+import {
+  Player,
+  Spook,
+  Bomb,
+  Explosion,
+  Door,
+  Floor,
+  Wall,
+  Destructible,
+  gameBoard,
+} from "./class.js";
 
 //initialize game states
 export let running = false;
@@ -13,68 +23,80 @@ export function startGame() {
   running = true;
   paused = false;
 
-  entities.player.activate();
   entities.player.updatePosition(9, 9);
-  console.log(entities.player)
+  //console.log(entities.player)
   activateSpooksOneByOne();
-
-  console.log('STATUS: startGame. running: ', running, ' | paused: ', paused)
+  setTimeout(activateSpooksOneByOne, 0);
+  setInterval(checkCollisions, 100);
+  console.log("STATUS: startGame. running: ", running, " | paused: ", paused);
 }
 
 export function placeBomb(row, col) {
-  console.log(`bomb! at ${row} ${col}`)
+  console.log(`bomb! at ${row} ${col}`);
 
   entities.bomb.activate();
   entities.bomb.updatePosition(row, col);
   blink(entities.bomb);
 
-  // Add a pause before activating the explosion using requestAnimationFrame
+  // Delay explosion
+  delay(1000, () => {
+    entities.bomb.deactivate();
+    entities.explosion.activate();
+    entities.explosion.updatePosition(row, col);
+    blink(entities.explosion);
+
+    // Delay surroundings destruction and explosion deactivation
+    delay(500, () => {
+      destroySurroundings(row, col);
+      entities.explosion.deactivate();
+    });
+  });
+}
+
+function delay(ms, callback) {
   let start;
   function step(timestamp) {
     if (!start) start = timestamp;
     const progress = timestamp - start;
-    if (progress < 1000) { // 1000 milliseconds = 1 second delay
+    if (progress < ms) {
       requestAnimationFrame(step);
     } else {
-      entities.explosion.activate();
-      entities.explosion.updatePosition(row, col);
-      blink(entities.explosion);
-      entities.explosion.deactivate();
-
+      callback();
     }
   }
   requestAnimationFrame(step);
-  destroySurroundings(row, col);
 }
 
 export function blink(entity) {
-    entity.element.classList.add("blink");
-  
-    // Remove the blink class after the animation ends
-    entity.element.addEventListener(
-      "animationend",
-      () => {
-        entity.element.classList.remove("blink");
-      },
-      { once: true }
-    );
-  }
+  entity.element.classList.add("blink");
 
-  export function decreaseLife() {
-  console.log('***Life decreased***', new Date);
-  }
+  // Remove the blink class after the animation ends
+  entity.element.addEventListener(
+    "animationend",
+    () => {
+      entity.element.classList.remove("blink");
+    },
+    { once: true }
+  );
+}
 
-  export function checkCollisions() {
-    entities.spooks.forEach((spook) => {
-      if (entities.player.row === spook.row && entities.player.col === spook.col) {
-        decreaseLife();
-        blink(entities.player);
-      }
-    });
-  }
+export function decreaseLife() {
+  console.log("***Life decreased***", new Date());
+}
+
+export function checkCollisions() {
+  entities.spooks.forEach((spook) => {
+    if (
+      entities.player.row === spook.row &&
+      entities.player.col === spook.col
+    ) {
+      decreaseLife();
+      blink(entities.player);
+    }
+  });
+}
 
 export function destroySurroundings(row, col) {
-  console.log('destroying...')
   const surroundings = [
     { row, col }, // Center / current position
     { row: row - 1, col }, // Up
@@ -92,19 +114,21 @@ export function destroySurroundings(row, col) {
       return;
     }
 
-    // Check if certain entities is at this position
-    /*  if (entities.player.row === row && entities.player.col === col) {
-       decreaselives();
-     } */
-    if (entities.spook.row === row && entities.spook.col === col) {
-      blink(entities.spook);
-    }
-    if (entities.destructible.row === row && entities.destructible.col === col) {
-      console.log("destroying destructible at", entities.destructible.row, entities.destructible.col)
-      blink(entities.destructible);
-    }
-    if (entities.door.row === row && entities.door.col === col) {
-      entities.door.activate();
-    }
+    // Iterate over all entities to check if they are at the current position
+    entities.all.forEach((entity) => {
+      if (entity.row === row && entity.col === col) {
+        if (entity instanceof Spook) {
+          blink(entity);
+          entity.deactivate();
+          // Add XP points or other logic here
+        } else if (entity instanceof Floor && entity.element.classList.contains("destructible")) {
+          console.log("destroying destructible at", entity.row, entity.col);
+          blink(entity);
+          entity.element.classList.replace("destructible", "floor");
+        } else if (entity instanceof Door) {
+          entity.activate();
+        }
+      }
+    });
   });
 }
