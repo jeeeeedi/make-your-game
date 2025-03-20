@@ -1,5 +1,7 @@
+import { addDestructibles } from './states.js';
+
 export const entities = {
-    all: [],
+  all: [],
 };
 
 console.log(entities);
@@ -11,34 +13,34 @@ import { listenForKeys } from './input.js';
 const gridSize = 17;
 
 export function createMap() {
-    gameBoard.textContent = "";
+  gameBoard.textContent = "";
 
-    for (let row = 1; row <= gridSize; row++) {
-        for (let col = 1; col <= gridSize; col++) {
-            if (row === 9 && col === 9) {
-                entities.floor = new Floor(row, col);
-                entities.all.push(entities.floor);
-                entities.floor.element.id = `floor-center`;
+  for (let row = 1; row <= gridSize; row++) {
+    for (let col = 1; col <= gridSize; col++) {
+      if (row === 9 && col === 9) {
+        entities.floor = new Floor(row, col);
+        entities.all.push(entities.floor);
+        entities.floor.element.id = `floor-center`;
 
-            } else if (row === 1 || row === 17 || col === 1 || col === 17 || (row % 2 === 1 && col % 2 === 1)) {
-                entities.wall = new Wall(row, col);
-                entities.all.push(entities.wall);
-            } else {
-                entities.floor = new Floor(row, col);
-                entities.all.push(entities.floor);
-            }
-        }
+      } else if (row === 1 || row === 17 || col === 1 || col === 17 || (row % 2 === 1 && col % 2 === 1)) {
+        entities.wall = new Wall(row, col);
+        entities.all.push(entities.wall);
+      } else {
+        entities.floor = new Floor(row, col);
+        entities.all.push(entities.floor);
+      }
     }
-    // Create and add player, spook, bomb, explosion, and door entities
-    entities.player = new Player(9, 9);
-    entities.spook = new Spook(0, 0);
-    entities.bomb = new Bomb(0, 0);
-    entities.explosion = new Explosion(0, 0);
-    entities.door = new Door(0, 0);
-    entities.all.push(entities.player, entities.spook, entities.bomb, entities.explosion, entities.door);
+  }
+  // Create and add player, spook, bomb, explosion, and door entities
+  entities.player = new Player(9, 9);
+  entities.spook = new Spook(0, 0);
+  entities.bomb = new Bomb(0, 0);
+  entities.explosion = new Explosion(0, 0);
+  entities.door = new Door(0, 0);
+  entities.all.push(entities.player, entities.spook, entities.bomb, entities.explosion, entities.door);
   addDestructibles();
   assignDoorPosition();
-    // Initialize and add 6 spook entities
+  // Initialize and add 6 spook entities
 
   const spooks = [];
   while (spooks.length < 6) {
@@ -72,62 +74,59 @@ export function activateSpooksOneByOne() {
 let total = 45; // total destructibles to be added
 
 export function addDestructibles() {
-    let built = 0;
+  let built = 0;
 
-    // Select random floor elements
-    const randomFloorTiles = Array.from(document.querySelectorAll('#game-board > .floor'))
-        .sort(() => 0.5 - Math.random());
+  // Select random floor elements
+  const randomFloorTiles = Array.from(document.querySelectorAll('#game-board > .floor'))
+    .sort(() => 0.5 - Math.random());
 
-    randomFloorTiles.forEach((tile) => {
-        if (built >= total) return;
+  randomFloorTiles.forEach((tile) => {
+    if (built >= total) return;
 
-        // Exclude center (player start position)
+    // Exclude center (player start position)
 
-        if (tile.id !== 'floor-center') {
-            // Change the ID and class of the floor element to destructible
-            tile.id = `destructible${built + 1}`;
-            tile.classList.add('destructible');
-            tile.classList.remove('floor');
+    if (tile.id !== 'floor-center') {
+      // Change the ID and class of the floor element to destructible
+      tile.id = `destructible${built + 1}`;
+      tile.classList.add('destructible');
+      tile.classList.remove('floor');
 
-            built++;
-        }
-    });
+      built++;
+    }
+  });
 }
 
 function assignDoorPosition() {
-    // Select a random floor tile
-    let randomtileID = `destructible${Math.floor(Math.random() * total) + 1}`;
-    let randomTileElement = document.getElementById(randomtileID);
+  // Select a random floor tile
+  let randomtileID = `destructible${Math.floor(Math.random() * total) + 1}`;
+  let randomTileElement = document.getElementById(randomtileID);
 
-    // Calculate row and column
-    if (randomTileElement) {
-        let tileIndex = Array.from(randomTileElement.parentNode.children).indexOf(randomTileElement);
-        let row = Math.floor(tileIndex / gridSize);
-        let col = tileIndex % gridSize;
-        entities.door.position = [row + 1, col + 1];
-        entities.door.updatePosition(row + 1, col + 1);
-        console.log(`Door is at id = ${randomtileID} | Row: ${row + 1}, Column: ${col + 1}`);
-    } else {
-        console.log(`Tile with ID ${randomtileID} not found.`);
-    }
+  // Calculate row and column
+  if (randomTileElement) {
+    let tileIndex = Array.from(randomTileElement.parentNode.children).indexOf(randomTileElement);
+    let row = Math.floor(tileIndex / gridSize);
+    let col = tileIndex % gridSize;
+    entities.door.position = [row + 1, col + 1];
+    entities.door.updatePosition(row + 1, col + 1);
+    console.log(`Door is at id = ${randomtileID} | Row: ${row + 1}, Column: ${col + 1}`);
+  } else {
+    console.log(`Tile with ID ${randomtileID} not found.`);
+  }
 }
 
-
-export const initializeSpooks = () => {
-    const spooks = [];
-    while (spooks.length < 6) {
-        const row = Math.floor(Math.random() * 15) + 2; // Random row between 2 and 16
-        const col = Math.floor(Math.random() * 15) + 2; // Random col between 2 and 16
-        const targetEntity = entities.all.find(entity => entity.row === row && entity.col === col);
-        if (targetEntity && targetEntity.element.classList.contains('floor')) {
-            const spook = new Spook(row, col);
-            spooks.push(spook);
-        }
-    }
-    entities.spooks = spooks; // Store the spooks in the entities object
-    return spooks;
-};
+export function activateSpooksOneByOne() {
+  entities.spooks.forEach((spook, index) => {
+    setTimeout(() => {
+      spook.activate();
+      console.log(`Spook at row=${spook.row}, col=${spook.col} activated`, new Date);
+      setInterval(() => {
+        spook.randomMove();
+      }, 800);
+    }, index * 8000); // 8 seconds delay between each activation
+  });
+}
 
 createMap();
 listenForKeys();
 startGame(); // Start the game
+setTimeout(activateSpooksOneByOne, 0)

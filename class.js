@@ -73,6 +73,16 @@ export class Spook extends Entity {
         super('spook', row, col);
         this.element.textContent = '👻';
     }
+    randomMove() {
+        const directions = [
+            { rowChange: -1, colChange: 0 }, // Up
+            { rowChange: 1, colChange: 0 },  // Down
+            { rowChange: 0, colChange: -1 }, // Left
+            { rowChange: 0, colChange: 1 }   // Right
+        ];
+        const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+        this.move(randomDirection.rowChange, randomDirection.colChange);
+    }
 }
 
 export class Bomb extends Entity {
