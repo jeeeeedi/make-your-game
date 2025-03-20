@@ -1,4 +1,4 @@
-import { entities } from "./game.js"
+import { entities, activateSpooksOneByOne } from "./game.js"
 
 
 //initialize game states
@@ -8,66 +8,21 @@ export let paused = false;
 export const gridSize = 17;
 
 export function startGame() {
-    if (running && !paused) return;
+  if (running && !paused) return;
 
-    running = true;
-    paused = false;
+  running = true;
+  paused = false;
 
-    entities.player.activate();
-    entities.player.updatePosition(9, 9);
-    console.log(entities.player)
-    activateSpooksOneByOne();
+  entities.player.activate();
+  entities.player.updatePosition(9, 9);
+  console.log(entities.player)
+  activateSpooksOneByOne();
 
-    addDestructibles();
-    assignDoorPosition();
-    console.log('STATUS: startGame. running: ', running, ' | paused: ', paused)
-}
-
-let total = 45; // total destructibles to be added
-
-function addDestructibles() {
-    let built = 0;
-
-    // Select random floor elements
-    const randomFloorTiles = Array.from(document.querySelectorAll('#game-board > .floor'))
-        .sort(() => 0.5 - Math.random());
-
-    randomFloorTiles.forEach((tile) => {
-        if (built >= total) return;
-
-        // Exclude center (player start position)
-
-        if (tile.id !== 'floor-center') {
-            // Change the ID and class of the floor element to destructible
-            tile.id = `destructible${built + 1}`;
-            tile.classList.add('destructible');
-            tile.classList.remove('floor');
-
-            built++;
-        }
-    });
-}
-
-function assignDoorPosition() {
-    // Select a random floor tile
-    let randomtileID = `destructible${Math.floor(Math.random() * total) + 1}`;
-    let randomTileElement = document.getElementById(randomtileID);
-
-    // Calculate row and column
-    if (randomTileElement) {
-        let tileIndex = Array.from(randomTileElement.parentNode.children).indexOf(randomTileElement);
-        let row = Math.floor(tileIndex / gridSize);
-        let col = tileIndex % gridSize;
-        entities.door.position = [row + 1, col + 1];
-        entities.door.updatePosition(row + 1, col + 1);
-        console.log(`Door is at id = ${randomtileID} | Row: ${row + 1}, Column: ${col + 1}`);
-    } else {
-        console.log(`Tile with ID ${randomtileID} not found.`);
-    }
+  console.log('STATUS: startGame. running: ', running, ' | paused: ', paused)
 }
 
 export function placeBomb(row, col) {
-    console.log(`bomb! at ${row} ${col}`)
+  console.log(`bomb! at ${row} ${col}`)
 
   entities.bomb.activate();
   entities.bomb.updatePosition(row, col);
@@ -89,29 +44,56 @@ export function placeBomb(row, col) {
     }
   }
   requestAnimationFrame(step);
+  destroySurroundings(row, col);
 }
 
 export function blink(entity) {
-    entity.element.classList.add("blink");
-  
-    // Remove the blink class after the animation ends
-    entity.element.addEventListener(
-      "animationend",
-      () => {
-        console.log(entities.explosion.element)
-        entity.element.classList.remove("blink");
-        entity.deactivate();
-      },
-      { once: true }
-    );
-  }
-  
-  function activateSpooksOneByOne() {
-    const spooks = entities.spooks;
-    spooks.forEach((spook, index) => {
-        setTimeout(() => {
-            spook.activate();
-            console.log(`Spook ${index + 1} activated at row=${spook.row}, col=${spook.col}`);
-        }, index * 1000); // 1000 milliseconds = 1 second delay between each activation
-    });
+  entity.element.classList.add("blink");
+
+  // Remove the blink class after the animation ends
+  entity.element.addEventListener(
+    "animationend",
+    () => {
+      //console.log(entities.explosion.element)
+      entity.element.classList.remove("blink");
+      entity.deactivate();
+    },
+    { once: true }
+  );
+}
+
+export function destroySurroundings(row, col) {
+  console.log('destroying...')
+  const surroundings = [
+    { row, col }, // Center / current position
+    { row: row - 1, col }, // Up
+    { row: row + 1, col }, // Down
+    { row, col: col - 1 }, // Left
+    { row, col: col + 1 }, // Right
+    { row: row - 1, col: col - 1 }, // Up-Left
+    { row: row - 1, col: col + 1 }, // Up-Right
+    { row: row + 1, col: col - 1 }, // Down-Left
+    { row: row + 1, col: col + 1 }, // Down-Right
+  ];
+
+  surroundings.forEach(({ row, col }) => {
+    if (row < 0 || row >= gridSize || col < 0 || col >= gridSize) {
+      return;
+    }
+
+    // Check if certain entities is at this position
+    /*  if (entities.player.row === row && entities.player.col === col) {
+       decreaselives();
+     } */
+    if (entities.spook.row === row && entities.spook.col === col) {
+      blink(entities.spook);
+    }
+    if (entities.destructible.row === row && entities.destructible.col === col) {
+      console.log("destroying destructible at", entities.destructible.row, entities.destructible.col)
+      blink(entities.destructible);
+    }
+    if (entities.door.row === row && entities.door.col === col) {
+      entities.door.activate();
+    }
+  });
 }

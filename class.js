@@ -63,6 +63,7 @@ export class Entity {
 export class Player extends Entity {
     constructor(row, col) {
         super('player', row, col);
+        this.activate();
         this.element.textContent = '😇';
     }
 }
@@ -98,12 +99,20 @@ export class Door extends Entity {
 export class Floor extends Entity {
     constructor(row, col) {
         super(`floor`, row, col);
+        this.activate();
+    }
+}
+
+export class Destructible extends Entity {
+    constructor(row, col) {
+        super(`destructible`, row, col);
+        this.activate();
     }
 }
 
 export class Wall extends Entity {
     constructor(row, col) {
         super(`wall`, row, col);
-        //this.element.textContent = '🪨'//
+        this.activate();
     }
 }
