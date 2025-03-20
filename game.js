@@ -15,7 +15,7 @@ import {
   Destructible,
   gameBoard,
 } from "./class.js";
-import { startGame, checkCollisions } from "./states.js";
+import { running, paused, checkCollisions, win } from "./states.js";
 import { listenForKeys } from "./input.js";
 
 const gridSize = 17;
@@ -68,14 +68,14 @@ export function createMap() {
     const targetEntity = entities.all.find(
       (entity) => entity.row === row && entity.col === col
     );
-    console.log("targetentity: ", targetEntity);
+    //console.log("targetentity: ", targetEntity);
     if (
       targetEntity instanceof Floor &&
       targetEntity.element.classList.contains("floor")
     ) {
       const spook = new Spook(row, col);
       spook.updatePosition(row, col);
-      console.log(spook);
+      //console.log(spook);
       spooks.push(spook);
       entities.all.push(spook);
     }
@@ -87,10 +87,10 @@ export function activateSpooksOneByOne() {
   entities.spooks.forEach((spook, index) => {
     setTimeout(() => {
       spook.activate();
-      console.log(
+      /*  console.log(
         `Spook at row=${spook.row}, col=${spook.col} activated`,
         new Date()
-      );
+      ); */
       setInterval(() => {
         spook.randomMove();
       }, 800);
@@ -144,7 +144,22 @@ function assignDoorPosition() {
 }
 
 createMap();
+//startGame();
 listenForKeys();
-startGame(); // Start the game
-setTimeout(activateSpooksOneByOne, 0);
-setInterval(checkCollisions, 100);
+
+function gameLoop() {
+  if (running && !paused) {
+    entities.spook.randomMove();
+
+    checkCollisions();
+
+    if (entities.player.collision(entities.door.row, entities.door.col)) {
+      win();
+    }
+
+    requestAnimationFrame(gameLoop);
+  }
+}
+
+// Start the game loop
+requestAnimationFrame(gameLoop);

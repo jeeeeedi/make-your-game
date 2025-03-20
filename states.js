@@ -10,10 +10,15 @@ import {
   Destructible,
   gameBoard,
 } from "./class.js";
+import { pauseTimer, timer } from "./timer.js";
 
 //initialize game states
 export let running = false;
 export let paused = false;
+export function togglePaused() {
+  paused = !paused;
+  console.log("paused?", paused);
+}
 
 export const gridSize = 17;
 let xp = document.getElementById("xp");
@@ -26,10 +31,12 @@ export function startGame() {
   paused = false;
 
   entities.player.updatePosition(9, 9);
+
   //console.log(entities.player)
   activateSpooksOneByOne();
   setTimeout(activateSpooksOneByOne, 0);
   setInterval(checkCollisions, 100);
+  timer();
   console.log("STATUS: startGame. running: ", running, " | paused: ", paused);
 }
 
@@ -147,7 +154,6 @@ export function destroySurroundings(row, col) {
           entity instanceof Floor &&
           entity.element.classList.contains("destructible")
         ) {
-          console.log("destroying destructible at", entity.row, entity.col);
           blink(entity);
           entity.element.classList.replace("destructible", "floor");
           xp.textContent = parseInt(xp.textContent) + 10; // 10xp per destructible
@@ -158,4 +164,14 @@ export function destroySurroundings(row, col) {
       }
     });
   });
+}
+
+export function win() {
+  console.log("You win!");
+  xp.textContent = parseInt(xp.textContent) + 100; // 100xp for winning
+  document.getElementById("status").textContent =
+    "congratulations! you win! press esc to start a new game.";
+  running = false;
+  paused = true;
+  pauseTimer;
 }

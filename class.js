@@ -34,7 +34,6 @@ export class Entity {
       this.active = false;
       this.element.style.opacity = "0"; // Hide entity (keep it in the layout, but invisible)
       this.element.style.visibility = "hidden"; // Make it non-interactive
-      console.log("Deactivated entity: ", this.element.id);
     }
   }
   move(rowChange, colChange) {
@@ -57,6 +56,12 @@ export class Entity {
     }
   }
 
+  collision(targetRow, targetCol) {
+   if (this.row === targetRow && this.col === targetCol) {
+     return true;
+   }
+  }
+
   updatePosition(row, col) {
     this.row = row;
     this.col = col;
@@ -69,6 +74,7 @@ export class Player extends Entity {
     super("player", row, col);
     this.activate();
     this.element.textContent = "😇";
+    this.updatePosition(9, 9);
   }
 }
 
