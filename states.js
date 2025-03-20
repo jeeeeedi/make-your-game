@@ -16,6 +16,8 @@ export let running = false;
 export let paused = false;
 
 export const gridSize = 17;
+let xp = document.getElementById("xp");
+let lives = document.getElementById("lives");
 
 export function startGame() {
   if (running && !paused) return;
@@ -32,6 +34,8 @@ export function startGame() {
 }
 
 export function placeBomb(row, col) {
+  if (!running && paused) return;
+
   console.log(`bomb! at ${row} ${col}`);
 
   entities.bomb.activate();
@@ -80,8 +84,21 @@ export function blink(entity) {
   );
 }
 
+let currentLives = 5;
+
 export function decreaseLife() {
-  console.log("***Life decreased***", new Date());
+  if (!running && paused) return;
+
+  if (currentLives > 0 && currentLives <= 5) {
+    currentLives--;
+    console.log("Lives: ", currentLives);
+    lives.textContent = "❤️".repeat(currentLives);
+  }
+  if (currentLives === 0) {
+    lives.textContent = "💔";
+    console.log("Game Over!");
+    //add game over logic here
+  }
 }
 
 export function checkCollisions() {
@@ -97,6 +114,8 @@ export function checkCollisions() {
 }
 
 export function destroySurroundings(row, col) {
+  if (!running && paused) return;
+
   const surroundings = [
     { row, col }, // Center / current position
     { row: row - 1, col }, // Up
@@ -117,16 +136,24 @@ export function destroySurroundings(row, col) {
     // Iterate over all entities to check if they are at the current position
     entities.all.forEach((entity) => {
       if (entity.row === row && entity.col === col) {
-        if (entity instanceof Spook) {
+        if (entity instanceof Player) {
+          decreaseLife();
+          blink(entity);
+        } else if (entity instanceof Spook) {
           blink(entity);
           entity.deactivate();
-          // Add XP points or other logic here
-        } else if (entity instanceof Floor && entity.element.classList.contains("destructible")) {
+          xp.textContent = parseInt(xp.textContent) + 30; // 30xp per spook
+        } else if (
+          entity instanceof Floor &&
+          entity.element.classList.contains("destructible")
+        ) {
           console.log("destroying destructible at", entity.row, entity.col);
           blink(entity);
           entity.element.classList.replace("destructible", "floor");
+          xp.textContent = parseInt(xp.textContent) + 10; // 10xp per destructible
         } else if (entity instanceof Door) {
           entity.activate();
+          xp.textContent = parseInt(xp.textContent) + 50; // 50xp for revealing a door
         }
       }
     });
