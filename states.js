@@ -27,8 +27,8 @@ export function startGame() {
 
   entities.player.updatePosition(9, 9);
   //console.log(entities.player)
-  activateSpooksOneByOne();
-  setTimeout(activateSpooksOneByOne, 0);
+  //ctivateSpooksOneByOne();
+  delay(500, activateSpooksOneByOne);
   setInterval(checkCollisions, 100);
   console.log("STATUS: startGame. running: ", running, " | paused: ", paused);
 }
@@ -104,6 +104,7 @@ export function decreaseLife() {
 export function checkCollisions() {
   entities.spooks.forEach((spook) => {
     if (
+      entities.spook.active &&  
       entities.player.row === spook.row &&
       entities.player.col === spook.col
     ) {

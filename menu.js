@@ -1,4 +1,4 @@
-import { togglePause, pauseGame, resumeGame } from './game.js';
+//import { togglePause, pauseGame, resumeGame } from './game.js';
 
 const menuButton = document.getElementById("menuButton");
 const popupMenu = document.getElementById("popupMenu");

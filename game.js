@@ -15,7 +15,7 @@ import {
   Destructible,
   gameBoard,
 } from "./class.js";
-import { startGame, checkCollisions } from "./states.js";
+import { startGame, checkCollisions, delay } from "./states.js";
 import { listenForKeys } from "./input.js";
 
 const gridSize = 17;
@@ -84,19 +84,21 @@ export function createMap() {
 }
 
 export function activateSpooksOneByOne() {
-  entities.spooks.forEach((spook, index) => {
-    setTimeout(() => {
-      spook.activate();
-      console.log(
-        `Spook at row=${spook.row}, col=${spook.col} activated`,
-        new Date()
-      );
-      setInterval(() => {
-        spook.randomMove();
-      }, 800);
-    }, index * 8000); // 8 seconds delay between each activation
-  });
-}
+    entities.spooks.forEach((spook, index) => {
+      delay(index * 8000, () => {
+        spook.activate();
+        console.log(
+          `Spook at row=${spook.row}, col=${spook.col} activated`,
+          new Date()
+        );
+        function moveSpook() {
+          spook.randomMove();
+          delay(800, moveSpook);
+        }
+        moveSpook();
+      });
+    });
+  }
 
 let total = 45; // total destructibles to be added
 
@@ -143,8 +145,14 @@ function assignDoorPosition() {
   }
 }
 
+function checkCollisionsLoop() {
+    checkCollisions();
+    requestAnimationFrame(checkCollisionsLoop);
+  }
+  
+
 createMap();
 listenForKeys();
 startGame(); // Start the game
-setTimeout(activateSpooksOneByOne, 0);
-setInterval(checkCollisions, 100);
+requestAnimationFrame(() => activateSpooksOneByOne());
+requestAnimationFrame(checkCollisionsLoop);
