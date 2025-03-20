@@ -163,3 +163,12 @@ footer p {
   animation: blink 0.5s ease;
   animation-iteration-count: 3;
 }
+@keyframes spook-animation {
+  from { background-position: 0 0; }
+  to { background-position: -300px 0; } /* Adjust based on sprite sheet */
+}
+
+.spook {
+  background-size: 600px 50px; /* Adjust based on sprite sheet */
+  animation: spook-animation 1s steps(6) infinite; /* Adjust duration and steps based on sprite sheet */
+}

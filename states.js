@@ -1,4 +1,4 @@
-import { entities } from "./game.js"
+import { entities, activateSpooksOneByOne } from "./game.js"
 
 
 //initialize game states
@@ -16,16 +16,16 @@ export function startGame() {
     entities.player.activate();
     entities.player.updatePosition(9, 9);
     console.log(entities.player)
-    activateSpooksOneByOne();
 
-    addDestructibles();
+    //addDestructibles();
+    activateSpooksOneByOne();
     assignDoorPosition();
     console.log('STATUS: startGame. running: ', running, ' | paused: ', paused)
 }
 
 let total = 45; // total destructibles to be added
 
-function addDestructibles() {
+export function addDestructibles() {
     let built = 0;
 
     // Select random floor elements
@@ -105,13 +105,3 @@ export function blink(entity) {
       { once: true }
     );
   }
-  
-  function activateSpooksOneByOne() {
-    const spooks = entities.spooks;
-    spooks.forEach((spook, index) => {
-        setTimeout(() => {
-            spook.activate();
-            console.log(`Spook ${index + 1} activated at row=${spook.row}, col=${spook.col}`);
-        }, index * 1000); // 1000 milliseconds = 1 second delay between each activation
-    });
-}
