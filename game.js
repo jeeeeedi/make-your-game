@@ -15,7 +15,11 @@ import {
   Destructible,
   gameBoard,
 } from "./class.js";
+<<<<<<< HEAD
 import { running, paused, checkCollisions, win } from "./states.js";
+=======
+import { startGame, checkCollisions, delay } from "./states.js";
+>>>>>>> 4832773f35ca31c54ba098d67d3776b98d9e24d3
 import { listenForKeys } from "./input.js";
 
 const gridSize = 17;
@@ -84,6 +88,7 @@ export function createMap() {
 }
 
 export function activateSpooksOneByOne() {
+<<<<<<< HEAD
   entities.spooks.forEach((spook, index) => {
     setTimeout(() => {
       spook.activate();
@@ -97,6 +102,23 @@ export function activateSpooksOneByOne() {
     }, index * 8000); // 8 seconds delay between each activation
   });
 }
+=======
+    entities.spooks.forEach((spook, index) => {
+      delay(index * 8000, () => {
+        spook.activate();
+        console.log(
+          `Spook at row=${spook.row}, col=${spook.col} activated`,
+          new Date()
+        );
+        function moveSpook() {
+          spook.randomMove();
+          delay(800, moveSpook);
+        }
+        moveSpook();
+      });
+    });
+  }
+>>>>>>> 4832773f35ca31c54ba098d67d3776b98d9e24d3
 
 let total = 45; // total destructibles to be added
 
@@ -143,9 +165,16 @@ function assignDoorPosition() {
   }
 }
 
+export function checkCollisionsLoop() {
+    checkCollisions();
+    requestAnimationFrame(checkCollisionsLoop);
+  }
+  
+
 createMap();
 //startGame();
 listenForKeys();
+<<<<<<< HEAD
 
 function gameLoop() {
   if (running && !paused) {
@@ -163,3 +192,8 @@ function gameLoop() {
 
 // Start the game loop
 requestAnimationFrame(gameLoop);
+=======
+startGame(); // Start the game
+requestAnimationFrame(() => activateSpooksOneByOne());
+requestAnimationFrame(checkCollisionsLoop);
+>>>>>>> 4832773f35ca31c54ba098d67d3776b98d9e24d3

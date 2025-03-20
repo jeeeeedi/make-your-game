@@ -1,4 +1,4 @@
-import { entities, activateSpooksOneByOne } from "./game.js";
+import { entities, activateSpooksOneByOne, checkCollisionsLoop } from "./game.js";
 import {
   Player,
   Spook,
@@ -23,6 +23,7 @@ export function togglePaused() {
 export const gridSize = 17;
 let xp = document.getElementById("xp");
 let lives = document.getElementById("lives");
+let collisionDetected = false
 
 export function startGame() {
   if (running && !paused) return;
@@ -33,10 +34,16 @@ export function startGame() {
   entities.player.updatePosition(9, 9);
 
   //console.log(entities.player)
+<<<<<<< HEAD
   activateSpooksOneByOne();
   setTimeout(activateSpooksOneByOne, 0);
   setInterval(checkCollisions, 100);
   timer();
+=======
+  //ctivateSpooksOneByOne();
+  delay(500, activateSpooksOneByOne);
+  requestAnimationFrame(checkCollisionsLoop);
+>>>>>>> 4832773f35ca31c54ba098d67d3776b98d9e24d3
   console.log("STATUS: startGame. running: ", running, " | paused: ", paused);
 }
 
@@ -109,16 +116,23 @@ export function decreaseLife() {
 }
 
 export function checkCollisions() {
-  entities.spooks.forEach((spook) => {
-    if (
-      entities.player.row === spook.row &&
-      entities.player.col === spook.col
-    ) {
-      decreaseLife();
-      blink(entities.player);
-    }
-  });
-}
+    if (collisionDetected) return;
+  
+    entities.spooks.forEach((spook) => {
+      if (
+        spook.active &&  
+        entities.player.row === spook.row &&
+        entities.player.col === spook.col
+      ) {
+        collisionDetected = true;
+        decreaseLife();
+        blink(entities.player);
+        delay(700, () => {
+          collisionDetected = false;
+        });
+      }
+    });
+  }
 
 export function destroySurroundings(row, col) {
   if (!running && paused) return;
