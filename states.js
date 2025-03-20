@@ -1,5 +1,4 @@
 import { entities, activateSpooksOneByOne } from "./game.js"
-import { entities, activateSpooksOneByOne } from "./game.js"
 
 
 //initialize game states

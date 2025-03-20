@@ -1,5 +1,3 @@
-import { addDestructibles } from './states.js';
-
 export const entities = {
   all: [],
 };
@@ -114,19 +112,7 @@ function assignDoorPosition() {
   }
 }
 
-export function activateSpooksOneByOne() {
-  entities.spooks.forEach((spook, index) => {
-    setTimeout(() => {
-      spook.activate();
-      console.log(`Spook at row=${spook.row}, col=${spook.col} activated`, new Date);
-      setInterval(() => {
-        spook.randomMove();
-      }, 800);
-    }, index * 8000); // 8 seconds delay between each activation
-  });
-}
-
 createMap();
 listenForKeys();
 startGame(); // Start the game
-setTimeout(activateSpooksOneByOne, 0)
+//setTimeout(activateSpooksOneByOne, 0)
