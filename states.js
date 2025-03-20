@@ -53,7 +53,7 @@ export function placeBomb(row, col) {
   });
 }
 
-function delay(ms, callback) {
+export function delay(ms, callback) {
   let start;
   function step(timestamp) {
     if (!start) start = timestamp;
