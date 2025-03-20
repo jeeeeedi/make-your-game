@@ -6,6 +6,7 @@ import {
   placeBomb,
 } from "./states.js";
 import {
+  activateSpooksOneByOne,
   entities /*player, spook, bomb, explosion, door, /*floor , destructible */,
 } from "./game.js";
 import { resumeTimer, pauseTimer } from "./timer.js";
@@ -18,7 +19,15 @@ export function listenForKeys() {
         if (!running) startGame();
         break;
       case "Escape":
-        if (running && !paused) console.log("Quit game");
+          pauseTimer();
+          togglePaused();
+          cancelAnimationFrame(activateSpooksOneByOne);
+          if (confirm("Are you sure you want to quit the current game?")) {
+            location.reload();
+          } else {
+            togglePaused(); // Toggle the paused state
+            resumeTimer(); // Resume the timer
+          }
         break;
       case " ":
         if (running) {
@@ -27,6 +36,8 @@ export function listenForKeys() {
             togglePaused(); // Toggle the paused state
             resumeTimer(); // Resume the timer
           } else {
+            cancelAnimationFrame(activateSpooksOneByOne);
+
             pauseTimer(); // Pause the timer
             togglePaused(); // Toggle the paused state
           }

@@ -1,5 +1,5 @@
 import { entities } from "./game.js";
-import { checkCollisions } from "./states.js";
+import { checkCollisions, running, paused } from "./states.js";
 
 export const gameBoard = document.getElementById("game-board");
 
@@ -37,6 +37,7 @@ export class Entity {
     }
   }
   move(rowChange, colChange) {
+    if (!running && paused) return;
     let newRow = this.row + rowChange;
     let newCol = this.col + colChange;
     const targetEntity = entities.all.find(
@@ -57,9 +58,9 @@ export class Entity {
   }
 
   collision(targetRow, targetCol) {
-   if (this.row === targetRow && this.col === targetCol) {
-     return true;
-   }
+    if (this.row === targetRow && this.col === targetCol) {
+      return true;
+    }
   }
 
   updatePosition(row, col) {

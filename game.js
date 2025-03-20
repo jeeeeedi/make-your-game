@@ -15,7 +15,14 @@ import {
   Destructible,
   gameBoard,
 } from "./class.js";
-import { running, paused, checkCollisions, win, delay } from "./states.js";
+import {
+  running,
+  paused,
+  checkCollisions,
+  win,
+  lose,
+  delay,
+} from "./states.js";
 import { listenForKeys } from "./input.js";
 
 const gridSize = 17;
@@ -84,21 +91,23 @@ export function createMap() {
 }
 
 export function activateSpooksOneByOne() {
-    entities.spooks.forEach((spook, index) => {
-      delay(index * 8000, () => {
-        spook.activate();
-        console.log(
-          `Spook at row=${spook.row}, col=${spook.col} activated`,
-          new Date()
-        );
-        function moveSpook() {
-          spook.randomMove();
-          delay(800, moveSpook);
-        }
-        moveSpook();
-      });
+  if (!running || paused) return;
+
+  entities.spooks.forEach((spook, index) => {
+    delay(index * 8000, () => {
+      spook.activate();
+      console.log(
+        `Spook at row=${spook.row}, col=${spook.col} activated`,
+        new Date()
+      );
+      function moveSpook() {
+        spook.randomMove();
+        delay(800, moveSpook);
+      }
+      if (!paused && running) moveSpook();
     });
-  }
+  });
+}
 
 let total = 45; // total destructibles to be added
 
@@ -146,32 +155,25 @@ function assignDoorPosition() {
 }
 
 export function checkCollisionsLoop() {
-    checkCollisions();
-    requestAnimationFrame(checkCollisionsLoop);
-  }
-  
+  checkCollisions();
+  requestAnimationFrame(checkCollisionsLoop);
+}
 
 createMap();
 //startGame();
 listenForKeys();
 
-function gameLoop() {
+export function gameLoop() {
   if (running && !paused) {
-    entities.spook.randomMove();
-
-    checkCollisions();
-
-    if (entities.player.collision(entities.door.row, entities.door.col)) {
-      win();
-    }
-
-    requestAnimationFrame(gameLoop);
+    win();
+    lose();
   }
+  requestAnimationFrame(gameLoop);
 }
 
 // Start the game loop
 requestAnimationFrame(gameLoop);
-
-
+/* 
 requestAnimationFrame(() => activateSpooksOneByOne());
 requestAnimationFrame(checkCollisionsLoop);
+ */

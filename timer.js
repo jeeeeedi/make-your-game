@@ -1,4 +1,4 @@
-import { running, paused, delay } from "./states.js";
+import { running, paused, delay, lose } from "./states.js";
 
 const timerState = {
   timeLeft: 60, // 1 minute
@@ -55,7 +55,10 @@ export function timer(onComplete) {
     resumeTimer(onComplete);
   } else if (paused) {
     pauseTimer();
-  } else if (!running) {
+  } if (!running) {
     startTimer(60, onComplete);
+  } if (timerState.timeLeft === 0) {
+    stopTimer();
+    lose();
   }
 }

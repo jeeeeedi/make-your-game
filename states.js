@@ -1,4 +1,8 @@
-import { entities, activateSpooksOneByOne, checkCollisionsLoop } from "./game.js";
+import {
+  entities,
+  activateSpooksOneByOne,
+  checkCollisionsLoop,
+} from "./game.js";
 import {
   Player,
   Spook,
@@ -10,31 +14,34 @@ import {
   Destructible,
   gameBoard,
 } from "./class.js";
-import { pauseTimer, timer } from "./timer.js";
+import { pauseTimer, timer, timerState } from "./timer.js";
+import { listenForKeys } from "./input.js";
 
 //initialize game states
 export let running = false;
 export let paused = false;
 export function togglePaused() {
-  paused ? !paused : paused;
-  console.log("paused?", paused);
+  paused = !paused;
 }
 
 export const gridSize = 17;
 let xp = document.getElementById("xp");
 let lives = document.getElementById("lives");
-let collisionDetected = false
+let collisionDetected = false;
 
 export function startGame() {
   if (running && !paused) return;
 
   running = true;
   paused = false;
-
+  document.getElementById("status").textContent =
+    "game running. press spacebar to pause the game or esc to quit.";
   entities.player.updatePosition(9, 9);
 
-  delay(500, activateSpooksOneByOne);
-  requestAnimationFrame(checkCollisionsLoop);
+  if (!paused) {
+    delay(500, activateSpooksOneByOne);
+    requestAnimationFrame(checkCollisionsLoop);
+  }
   timer();
   console.log("STATUS: startGame. running: ", running, " | paused: ", paused);
 }
@@ -102,29 +109,28 @@ export function decreaseLife() {
   }
   if (currentLives === 0) {
     lives.textContent = "💔";
-    console.log("Game Over!");
-    //add game over logic here
+    lose();
   }
 }
 
 export function checkCollisions() {
-    if (collisionDetected) return;
-  
-    entities.spooks.forEach((spook) => {
-      if (
-        spook.active &&  
-        entities.player.row === spook.row &&
-        entities.player.col === spook.col
-      ) {
-        collisionDetected = true;
-        decreaseLife();
-        blink(entities.player);
-        delay(700, () => {
-          collisionDetected = false;
-        });
-      }
-    });
-  }
+  if (collisionDetected) return;
+
+  entities.spooks.forEach((spook) => {
+    if (
+      spook.active &&
+      entities.player.row === spook.row &&
+      entities.player.col === spook.col
+    ) {
+      collisionDetected = true;
+      decreaseLife();
+      blink(entities.player);
+      delay(700, () => {
+        collisionDetected = false;
+      });
+    }
+  });
+}
 
 export function destroySurroundings(row, col) {
   if (!running && paused) return;
@@ -173,11 +179,26 @@ export function destroySurroundings(row, col) {
 }
 
 export function win() {
-  console.log("You win!");
-  xp.textContent = parseInt(xp.textContent) + 100; // 100xp for winning
-  document.getElementById("status").textContent =
-    "congratulations! you win! press esc to start a new game.";
-  running = false;
-  paused = true;
-  pauseTimer;
+  if (entities.player.collision(entities.door.row, entities.door.col)) {
+    console.log("You win!");
+    xp.textContent = parseInt(xp.textContent) + 100; // 100xp for winning
+    document.getElementById("status").textContent =
+      "congratulations! you win! press esc to start a new game.";
+    running = false;
+    paused = true;
+    pauseTimer();
+    listenForKeys();
+  }
+}
+
+export function lose() {
+  if (currentLives === 0 || timerState.timeLeft === 0) {
+    console.log("You lose!");
+    document.getElementById("status").textContent =
+      "game over! press esc to start a new game.";
+    running = false;
+    paused = true;
+    pauseTimer();
+    listenForKeys();
+  }
 }
