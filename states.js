@@ -16,7 +16,7 @@ import { pauseTimer, timer } from "./timer.js";
 export let running = false;
 export let paused = false;
 export function togglePaused() {
-  paused = !paused;
+  paused ? !paused : paused;
   console.log("paused?", paused);
 }
 
@@ -33,17 +33,9 @@ export function startGame() {
 
   entities.player.updatePosition(9, 9);
 
-  //console.log(entities.player)
-<<<<<<< HEAD
-  activateSpooksOneByOne();
-  setTimeout(activateSpooksOneByOne, 0);
-  setInterval(checkCollisions, 100);
-  timer();
-=======
-  //ctivateSpooksOneByOne();
   delay(500, activateSpooksOneByOne);
   requestAnimationFrame(checkCollisionsLoop);
->>>>>>> 4832773f35ca31c54ba098d67d3776b98d9e24d3
+  timer();
   console.log("STATUS: startGame. running: ", running, " | paused: ", paused);
 }
 
