@@ -1,5 +1,5 @@
-import { entities } from "./game.js";
-import { checkCollisions, running, paused } from "./states.js";
+import { entities, checkCollisions, delay } from "./game.js";
+import { running, paused } from "./states.js";
 
 export const gameBoard = document.getElementById("game-board");
 
@@ -72,6 +72,7 @@ export class Player extends Entity {
     this.activate();
     this.element.textContent = "😇";
     this.updatePosition(9, 9);
+    this.lives = 5;
   }
 }
 
@@ -79,24 +80,28 @@ export class Spook extends Entity {
   constructor(row, col) {
     super("spook", row, col);
     this.element.textContent = "👻";
-    this.movementInterval = null;
+    this.isMoving = false;
   }
 
   startMoving() {
-    if (!this.movementInterval) {
-      this.movementInterval = setInterval(() => {
-        if (!paused && running) {
-          this.randomMove();
-        }
-      }, 800);
-    }
+    if (!running || paused) return;
+    this.isMoving = true;
+    this.moveLoop();
   }
 
   stopMoving() {
-    if (this.movementInterval) {
-      clearInterval(this.movementInterval);
-      this.movementInterval = null;
-    }
+    this.isMoving = false;
+  }
+
+  moveLoop() {
+    if (!this.isMoving || !running || paused) return;
+    
+    this.randomMove();
+    delay(500, () => {
+      if (this.isMoving) {
+        this.moveLoop();
+      }
+    });
   }
 
   randomMove() {
@@ -149,13 +154,6 @@ export class Door extends Entity {
 export class Floor extends Entity {
   constructor(row, col) {
     super(`floor`, row, col);
-    this.activate();
-  }
-}
-
-export class Destructible extends Entity {
-  constructor(row, col) {
-    super(`destructible`, row, col);
     this.activate();
   }
 }

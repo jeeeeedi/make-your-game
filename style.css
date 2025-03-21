@@ -14,13 +14,8 @@ body {
   font-style: normal;
 }
 
-header {
-  padding-top: 150px;
-}
-
 h1,
 h2,
-#status,
 p {
   text-align: center;
   color: greenyellow;
@@ -49,16 +44,6 @@ p {
   margin: 0 auto;
   width: fit-content;
 }
-
-/* .tile {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  font-size: 30px;
-} */
 
 .wall {
   background-color: rgb(118, 118, 118);
@@ -106,14 +91,6 @@ p {
     opacity: 0;
   }
 }
-
-/* .door {
-  font-size: 30px;
-}
-
-.bomb {
-  font-size: 30px;
-} */
 
 .explosion {
   position: absolute;
@@ -185,6 +162,7 @@ footer p {
   animation: spook-animation 1s steps(6) infinite; /* Adjust duration and steps based on sprite sheet */
 }
 
+/* Modal windows */
 #game-menu, #controls-window {
     position: fixed;
     top: 0;
@@ -198,7 +176,7 @@ footer p {
     z-index: 1000;
 }
 
-.menu-content, .controls-content {
+.modal-content {
     background-color: #1a1a1a;
     padding: 2rem;
     border-radius: 10px;
@@ -208,42 +186,33 @@ footer p {
     width: 90%;
 }
 
-.menu-content h2, .controls-content h2 {
+#game-menu h2, #controls-window h2 {
     margin-bottom: 1.5rem;
     color: greenyellow;
     font-size: 2rem;
 }
 
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.menu-buttons button {
+/* Menu buttons */
+.menu-btn {
     padding: 0.8rem 1.5rem;
     font-size: 1.1rem;
     background-color: #333;
     color: greenyellow;
     border: 2px solid greenyellow;
     border-radius: 5px;
-    cursor: pointer;
     transition: all 0.3s ease;
     width: 200px;
-    margin: 0 auto;
+    margin: 0.8rem auto;
+    display: block;
+    cursor: pointer;
+    word-wrap: break-word;
 }
 
-.menu-buttons button:hover {
+.menu-btn:hover {
     background-color: greenyellow;
     color: #333;
 }
 
-.menu-buttons button:disabled {
-    background-color: #666;
-    color: #999;
-    border-color: #666;
-    cursor: not-allowed;
-}
 
 .game-container {
     position: relative;
@@ -251,32 +220,26 @@ footer p {
     justify-content: center;
     align-items: flex-start;
     gap: 20px;
-    margin-top: 20px;
+    margin: 20px auto;
     width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-#menu-button {
+/* Game controls */
+#menu-button, #controls-button {
     display: none;
-    position: absolute;
-    top: 20px;
+    position: fixed;
     z-index: 1001;
-    padding: 0.8rem 1.5rem;
-    font-size: 1.1rem;
-    background-color: #333;
-    color: greenyellow;
-    border: 2px solid greenyellow;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 120px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+#menu-button {
+    top: 20px;
+    left: calc(50% + 340px); /* Position relative to game board */
+    width: 120px;
+}
+
 #menu-button:hover {
-    background-color: greenyellow;
-    color: #333;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
@@ -286,31 +249,17 @@ footer p {
 }
 
 #controls-button {
-    display: none;
-    position: fixed;
     top: 70px;
     right: 20px;
-    z-index: 1001;
-    padding: 0.5rem 1.5rem 0.5rem 1rem;
-    font-size: 1rem;
-    background-color: #333;
-    color: greenyellow;
-    border: 2px solid greenyellow;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
     width: 100px;
-    text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding: 0.5rem 1.5rem 0.5rem 1rem;
+    font-size: 1rem;
 }
 
-#controls-button:hover {
-    background-color: greenyellow;
-    color: #333;
-}
-
+/* Controls text */
 .controls-text {
     text-align: left;
     margin: 2rem 0;
@@ -324,21 +273,4 @@ footer p {
 
 .controls-text strong {
     color: #fff;
-}
-
-#close-controls-btn {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background-color: #333;
-    color: greenyellow;
-    border: 2px solid greenyellow;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 1rem;
-}
-
-#close-controls-btn:hover {
-    background-color: greenyellow;
-    color: #333;
 }

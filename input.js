@@ -1,82 +1,57 @@
 import {
   running,
   paused,
-  togglePaused,
   startGame,
-  placeBomb,
 } from "./states.js";
 import {
-  activateSpooksOneByOne,
-  entities /*player, spook, bomb, explosion, door, /*floor , destructible */,
+  entities,
 } from "./game.js";
-import { resumeTimer, pauseTimer } from "./timer.js";
+import { placeBomb } from "./explosions.js";
 
 export function listenForKeys() {
+
+  // Game control keys (not movement)
   document.addEventListener("keydown", (e) => {
-    console.log(`Key pressed: ${e.key}`);
     switch (e.key) {
       case "Enter":
         if (!running) startGame();
         break;
-      case "Escape":
-        pauseTimer();
-        togglePaused();
-        if (confirm("Are you sure you want to quit the current game?")) {
-          location.reload();
-        } else {
-          togglePaused();
-          resumeTimer();
-          activateSpooksOneByOne();
-        }
-        break;
-      case " ":
-        if (running) {
-          e.preventDefault(); // Prevent scrolling
-          togglePaused();
-          if (paused) {
-            pauseTimer();
-          } else {
-            resumeTimer();
-            activateSpooksOneByOne();
-          }
-        }
-        break;
-      case "x":
+
+      case "x": 
       case "X":
-        if (running && !paused)
+        if (running && !paused) {
           placeBomb(entities.player.row, entities.player.col);
-        break;
-      default:
-        if (
-          running &&
-          !paused &&
-          entities.player.row >= 1 &&
-          entities.player.row <= 17 &&
-          entities.player.col >= 1 &&
-          entities.player.col <= 17
-        ) {
-          //console.log(`Player position before move: row=${entities.player.row}, col=${entities.player.col}`);
-          switch (e.key) {
-            case "ArrowUp":
-              e.preventDefault();
-              entities.player.move(-1, 0);
-              break;
-            case "ArrowDown":
-              e.preventDefault();
-              entities.player.move(1, 0);
-              break;
-            case "ArrowLeft":
-              e.preventDefault();
-              entities.player.move(0, -1);
-              break;
-            case "ArrowRight":
-              e.preventDefault();
-              entities.player.move(0, 1);
-              break;
-          }
-          // console.log(`Player position after move: row=${entities.player.row}, col=${entities.player.col}`);
         }
         break;
+        default:
+          if (
+            running &&
+            !paused &&
+            entities.player.row >= 1 &&
+            entities.player.row <= 17 &&
+            entities.player.col >= 1 &&
+            entities.player.col <= 17
+          ) {
+            switch (e.key) {
+              case "ArrowUp":
+                e.preventDefault();
+                entities.player.move(-1, 0);
+                break;
+              case "ArrowDown":
+                e.preventDefault();
+                entities.player.move(1, 0);
+                break;
+              case "ArrowLeft":
+                e.preventDefault();
+                entities.player.move(0, -1);
+                break;
+              case "ArrowRight":
+                e.preventDefault();
+                entities.player.move(0, 1);
+                break;
+            }
+          }
+          break;
     }
   });
 }

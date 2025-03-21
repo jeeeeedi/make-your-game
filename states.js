@@ -1,27 +1,21 @@
 import {
   entities,
-  activateSpooksOneByOne,
-  checkCollisionsLoop,
+  addDestructibles,
+  assignDoorPosition, gridSize, delay
 } from "./game.js";
-import {
-  Player,
-  Spook,
-  Bomb,
-  Explosion,
-  Door,
-  Floor,
-  Wall,
-  Destructible,
-  gameBoard,
-} from "./class.js";
 import { pauseTimer, timer, timerState } from "./timer.js";
 import { listenForKeys } from "./input.js";
+import { activateSpooksOneByOne } from "./spooks.js";
 
 //initialize game states
 export let running = false;
 export let paused = false;
+let xp = document.getElementById("xp");
+let lives = document.getElementById("lives");
+
 export function togglePaused() {
   paused = !paused;
+  
   if (paused) {
     // Stop all spook movements when pausing
     entities.spooks.forEach(spook => {
@@ -39,20 +33,32 @@ export function togglePaused() {
   }
 }
 
-export const gridSize = 17;
-let xp = document.getElementById("xp");
-let lives = document.getElementById("lives");
-let collisionDetected = false;
-
 export function startGame() {
   if (running && !paused) return;
 
+  // Reset game state
   running = true;
   paused = false;
-  document.getElementById("status").textContent =
-    "game running. press spacebar to pause the game or esc to quit.";
+  entities.player.lives = 5;
+  lives.textContent = "❤️".repeat(entities.player.lives);
+  xp.textContent = "0";
+
+  entities.door.deactivate();
+  
   entities.player.updatePosition(9, 9);
-  entities.player.activate(); // Activate the player
+  entities.player.activate();
+
+  entities.spooks.forEach(spook => {
+    spook.deactivate();
+    spook.stopMoving();
+  });
+
+  entities.bomb.deactivate();
+  entities.explosion.deactivate();
+  // Reset timer
+  timerState.timeLeft = 60;
+  timerState.timerActive = false;
+  document.getElementById("time").textContent = "01:00";
 
   // Show menu button
   const menuButton = document.getElementById("menu-button");
@@ -63,168 +69,69 @@ export function startGame() {
   menuButton.style.zIndex = "1001";
   document.getElementById("start-game-btn").disabled = true;
 
-  // Start the game systems
-  delay(500, () => {
-    activateSpooksOneByOne();
-    requestAnimationFrame(checkCollisionsLoop);
-  });
+  // Activating the game
+  // Add destructibles and assign door position after everything is reset
+  addDestructibles();
+  assignDoorPosition();
+
+  // Start the game systems immediately
+  activateSpooksOneByOne();
   timer();
-  console.log("STATUS: startGame. running: ", running, " | paused: ", paused);
-}
-
-export function placeBomb(row, col) {
-  if (!running && paused) return;
-
-  console.log(`bomb! at ${row} ${col}`);
-
-  entities.bomb.activate();
-  entities.bomb.updatePosition(row, col);
-  blink(entities.bomb);
-
-  // Delay explosion
-  delay(1000, () => {
-    entities.bomb.deactivate();
-    entities.explosion.activate();
-    entities.explosion.updatePosition(row, col);
-    blink(entities.explosion);
-
-    // Delay surroundings destruction and explosion deactivation
-    delay(500, () => {
-      destroySurroundings(row, col);
-      entities.explosion.deactivate();
-    });
-  });
-}
-
-export function delay(ms, callback) {
-  let start;
-  function step(timestamp) {
-    if (!start) start = timestamp;
-    const progress = timestamp - start;
-    if (progress < ms) {
-      requestAnimationFrame(step);
-    } else {
-      callback();
-    }
-  }
-  requestAnimationFrame(step);
-}
-
-export function blink(entity) {
-  entity.element.classList.add("blink");
-
-  // Remove the blink class after the animation ends
-  entity.element.addEventListener(
-    "animationend",
-    () => {
-      entity.element.classList.remove("blink");
-    },
-    { once: true }
-  );
-}
-
-let currentLives = 5;
-
-export function decreaseLife() {
-  if (!running && paused) return;
-
-  if (currentLives > 0 && currentLives <= 5) {
-    currentLives--;
-    console.log("Lives: ", currentLives);
-    lives.textContent = "❤️".repeat(currentLives);
-  }
-  if (currentLives === 0) {
-    lives.textContent = "💔";
-    lose();
-  }
-}
-
-export function checkCollisions() {
-  if (collisionDetected) return;
-
-  entities.spooks.forEach((spook) => {
-    if (
-      spook.active &&
-      entities.player.row === spook.row &&
-      entities.player.col === spook.col
-    ) {
-      collisionDetected = true;
-      decreaseLife();
-      blink(entities.player);
-      delay(700, () => {
-        collisionDetected = false;
-      });
-    }
-  });
-}
-
-export function destroySurroundings(row, col) {
-  if (!running && paused) return;
-
-  const surroundings = [
-    { row, col }, // Center / current position
-    { row: row - 1, col }, // Up
-    { row: row + 1, col }, // Down
-    { row, col: col - 1 }, // Left
-    { row, col: col + 1 }, // Right
-    { row: row - 1, col: col - 1 }, // Up-Left
-    { row: row - 1, col: col + 1 }, // Up-Right
-    { row: row + 1, col: col - 1 }, // Down-Left
-    { row: row + 1, col: col + 1 }, // Down-Right
-  ];
-
-  surroundings.forEach(({ row, col }) => {
-    if (row < 0 || row >= gridSize || col < 0 || col >= gridSize) {
-      return;
-    }
-
-    // Iterate over all entities to check if they are at the current position
-    entities.all.forEach((entity) => {
-      if (entity.row === row && entity.col === col) {
-        if (entity instanceof Player) {
-          decreaseLife();
-          blink(entity);
-        } else if (entity instanceof Spook) {
-          blink(entity);
-          entity.deactivate();
-          xp.textContent = parseInt(xp.textContent) + 30; // 30xp per spook
-        } else if (
-          entity instanceof Floor &&
-          entity.element.classList.contains("destructible")
-        ) {
-          blink(entity);
-          entity.element.classList.replace("destructible", "floor");
-          xp.textContent = parseInt(xp.textContent) + 10; // 10xp per destructible
-        } else if (entity instanceof Door) {
-          entity.activate();
-          xp.textContent = parseInt(xp.textContent) + 50; // 50xp for revealing a door
-        }
-      }
-    });
-  });
 }
 
 export function win() {
   if (entities.player.collision(entities.door.row, entities.door.col)) {
-    console.log("You win!");
     xp.textContent = parseInt(xp.textContent) + 100; // 100xp for winning
-    document.getElementById("status").textContent =
-      "congratulations! you win! press esc to start a new game.";
     running = false;
     paused = true;
     pauseTimer();
     listenForKeys();
+    
+    // Stop all spook movements
+    entities.spooks.forEach(spook => {
+      if (spook.active) {
+        spook.stopMoving();
+      }
+    });
+    
+    // Show game over window with win message
+    const gameOverWindow = document.getElementById("game-over-window");
+    const gameOverText = document.getElementById("game-over-text");
+    gameOverText.textContent = `Congratulations! You won! Your score: ${xp.textContent}`;
+    gameOverWindow.style.display = "flex";
+    gameOverWindow.style.position = "fixed";
+    gameOverWindow.style.top = "50%";
+    gameOverWindow.style.left = "50%";
+    gameOverWindow.style.transform = "translate(-50%, -50%)";
+    gameOverWindow.style.zIndex = "1000";
   }
 }
 
 export function lose() {
-  if (currentLives === 0 || timerState.timeLeft === 0) {
-    console.log("You lose!");
-    document.getElementById("status").textContent =
-      "game over! press esc to start a new game.";
+  if (entities.player.lives === 0 || timerState.timeLeft === 0) {
     running = false;
     paused = true;
     pauseTimer();
     listenForKeys();
+    
+    // Stop all spook movements
+    entities.spooks.forEach(spook => {
+      if (spook.active) {
+        spook.stopMoving();
+      }
+    });
+    
+    // Reset game state
+    xp.textContent = "0";
+    
+    const gameOverWindow = document.getElementById("game-over-window");
+    const gameOverText = document.getElementById("game-over-text");
+    gameOverText.textContent = "Game Over!";
+    gameOverWindow.style.display = "flex";
+    gameOverWindow.style.position = "fixed";
+    gameOverWindow.style.top = "50%";
+    gameOverWindow.style.left = "50%";
+    gameOverWindow.style.transform = "translate(-50%, -50%)";
+    gameOverWindow.style.zIndex = "1000";
   }
 }
