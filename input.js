@@ -70,10 +70,12 @@ export function listenForKeys() {
             case "ArrowLeft":
               e.preventDefault();
               entities.player.move(0, -1);
+              entities.player.element.style.transform = "scaleX(-1)"; // Flip the image horizontally
               break;
             case "ArrowRight":
               e.preventDefault();
               entities.player.move(0, 1);
+              entities.player.element.style.transform = "scaleX(1)"; // Reset to normal orientation
               break;
           }
           // console.log(`Player position after move: row=${entities.player.row}, col=${entities.player.col}`);

@@ -58,8 +58,8 @@ export function placeBomb(row, col) {
   // Delay explosion
   delay(1000, () => {
     entities.bomb.deactivate();
-    entities.explosion.activate();
     entities.explosion.updatePosition(row, col);
+    entities.explosion.activate();
     blink(entities.explosion);
 
     // Delay surroundings destruction and explosion deactivation

@@ -1,6 +1,6 @@
 import { running, paused, delay, lose } from "./states.js";
 
-const timerState = {
+export const timerState = {
   timeLeft: 60, // 1 minute
   timerActive: false,
 };
