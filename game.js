@@ -25,7 +25,7 @@ import { blink } from "./explosions.js";
 
 export const gridSize = 17;
 
-export function createMap() {
+export function setupGame() {
   gameBoard.textContent = "";
 
   for (let row = 1; row <= gridSize; row++) {
@@ -49,15 +49,14 @@ export function createMap() {
       }
     }
   }
+
   // Create and add player, spook, bomb, explosion, and door entities
   entities.player = new Player(9, 9);
-  //entities.spook = new Spook(0, 0);
   entities.bomb = new Bomb(0, 0);
   entities.explosion = new Explosion(0, 0);
   entities.door = new Door(0, 0);
   entities.all.push(
     entities.player,
-    //entities.spook,
     entities.bomb,
     entities.explosion,
     entities.door
@@ -140,7 +139,7 @@ export function assignDoorPosition() {
   }
 }
 
-createMap();
+setupGame();
 setupMenu(); // Initialize the menu
 listenForKeys();
 
@@ -151,7 +150,6 @@ export function gameLoop() {
   if (running && !paused) {
     win();
     lose();
-    //updateMovement();
     checkCollisions();
   }
   requestAnimationFrame(gameLoop);

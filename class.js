@@ -72,7 +72,6 @@ export class Player extends Entity {
     this.activate();
     this.element.style.backgroundImage = 'url("./Dog_1.png")';
     this.element.style.backgroundSize = 'cover';
-    //this.element.textContent = "😇";
     this.updatePosition(9, 9);
     this.lives = 5;
   }
@@ -83,7 +82,6 @@ export class Spook extends Entity {
     super("spook", row, col);
     this.element.style.backgroundImage = 'url("./Lion.png")';
     this.element.style.backgroundSize = 'contain';
-    //this.element.textContent = "👻";
     this.isMoving = false;
   }
 
@@ -99,7 +97,7 @@ export class Spook extends Entity {
 
   moveLoop() {
     if (!this.isMoving || !running || paused) return;
-    
+
     this.randomMove();
     delay(500, () => {
       if (this.isMoving) {
@@ -142,8 +140,6 @@ export class Spook extends Entity {
 export class Bomb extends Entity {
   constructor(row, col) {
     super("bomb", row, col);
-    /* this.element.style.backgroundImage = 'url("./bomb.png")';
-    this.element.style.backgroundSize = 'cover'; */
     this.element.textContent = "✨";
   }
 }
@@ -160,7 +156,6 @@ export class Door extends Entity {
     super("door", row, col);
     this.element.style.backgroundImage = 'url("./exitsign.png")';
     this.element.style.backgroundSize = 'contain';
-    //this.element.textContent = "🚪";
   }
 }
 

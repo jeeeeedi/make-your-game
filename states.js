@@ -15,7 +15,7 @@ let lives = document.getElementById("lives");
 
 export function togglePaused() {
   paused = !paused;
-  
+
   if (paused) {
     // Stop all spook movements when pausing
     entities.spooks.forEach(spook => {
@@ -44,7 +44,7 @@ export function startGame() {
   xp.textContent = "0";
 
   entities.door.deactivate();
-  
+
   entities.player.updatePosition(9, 9);
   entities.player.activate();
 
@@ -55,6 +55,7 @@ export function startGame() {
 
   entities.bomb.deactivate();
   entities.explosion.deactivate();
+
   // Reset timer
   timerState.timeLeft = 60;
   timerState.timerActive = false;
@@ -69,7 +70,7 @@ export function startGame() {
   menuButton.style.zIndex = "1001";
   document.getElementById("start-game-btn").disabled = true;
 
-  // Activating the game
+  // ACTIVATE the game
   // Add destructibles and assign door position after everything is reset
   addDestructibles();
   assignDoorPosition();
@@ -86,14 +87,14 @@ export function win() {
     paused = true;
     pauseTimer();
     listenForKeys();
-    
+
     // Stop all spook movements
     entities.spooks.forEach(spook => {
       if (spook.active) {
         spook.stopMoving();
       }
     });
-    
+
     // Show game over window with win message
     const gameOverWindow = document.getElementById("game-over-window");
     const gameOverText = document.getElementById("game-over-text");
@@ -113,17 +114,17 @@ export function lose() {
     paused = true;
     pauseTimer();
     listenForKeys();
-    
+
     // Stop all spook movements
     entities.spooks.forEach(spook => {
       if (spook.active) {
         spook.stopMoving();
       }
     });
-    
+
     // Reset game state
     xp.textContent = "0";
-    
+
     const gameOverWindow = document.getElementById("game-over-window");
     const gameOverText = document.getElementById("game-over-text");
     gameOverText.textContent = "Game Over!";

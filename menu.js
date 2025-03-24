@@ -2,16 +2,17 @@ import { startGame, togglePaused, running } from "./states.js";
 import { entities } from "./game.js";
 import { timer } from "./timer.js";
 
-export function setupMenu() {
-    // Get menu elements
-    const menu = document.getElementById('game-menu');
-    const controlsWindow = document.getElementById('controls-window');
-    const gameOverWindow = document.getElementById('game-over-window');
-    const menuButton = document.getElementById("menu-button");
-    const startGameBtn = document.getElementById("start-game-btn");
+// Get menu elements
+const menu = document.getElementById("game-menu");
+const controlsWindow = document.getElementById("controls-window");
+const gameOverWindow = document.getElementById("game-over-window");
+const menuButton = document.getElementById("menu-button");
+const startGameBtn = document.getElementById("start-game-btn");
+const restartBtn = document.getElementById("restart-btn");
 
+export function setupMenu() {
     // Add menu button class and event listener
-    menuButton.classList.add('menu-btn');
+    menuButton.classList.add("menu-btn");
     menuButton.addEventListener("click", () => {
         handleMenuVisibility(true);
     });
@@ -19,7 +20,7 @@ export function setupMenu() {
     // Create controls button for menu
     const controlsButton = document.createElement("button");
     controlsButton.id = "controls-button";
-    controlsButton.classList.add('menu-btn');
+    controlsButton.classList.add("menu-btn");
     controlsButton.textContent = "Controls";
     controlsButton.addEventListener("click", () => {
         handleMenuVisibility(true, true);
@@ -81,11 +82,6 @@ export function setupMenu() {
 }
 
 function handleMenuVisibility(show, showControls = false) {
-    const menu = document.getElementById("game-menu");
-    const controlsWindow = document.getElementById("controls-window");
-    const gameOverWindow = document.getElementById("game-over-window");
-    const menuButton = document.getElementById("menu-button");
-    const startGameBtn = document.getElementById("start-game-btn");
 
     if (show) {
         if (showControls) {
@@ -98,12 +94,18 @@ function handleMenuVisibility(show, showControls = false) {
                 startGameBtn.disabled = false;
                 startGameBtn.style.cursor = "pointer";
                 startGameBtn.style.opacity = "1";
+                // Hide the restart button when the start-game-btn is shown
+                restartBtn.disabled = false;
+                restartBtn.style.display = "block";
+                restartBtn.style.opacity = "1";
             } else {
                 startGameBtn.textContent = "Start Game";
                 startGameBtn.disabled = false;
                 startGameBtn.style.cursor = "pointer";
                 startGameBtn.style.opacity = "1";
+
             }
+
         }
         menuButton.style.display = "none";
         if (running) {

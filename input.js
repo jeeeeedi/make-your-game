@@ -13,15 +13,13 @@ export function listenForKeys() {
   // Game control keys (not movement)
   document.addEventListener("keydown", (e) => {
     switch (e.key) {
-      case "Enter":
-        if (!running) startGame();
-        break;
-
-      case "x": 
+      case "x":
       case "X":
         if (running && !paused) {
           placeBomb(entities.player.row, entities.player.col);
+        }
         break;
+
       default:
         if (
           running &&
@@ -31,7 +29,6 @@ export function listenForKeys() {
           entities.player.col >= 1 &&
           entities.player.col <= 17
         ) {
-          //console.log(`Player position before move: row=${entities.player.row}, col=${entities.player.col}`);
           switch (e.key) {
             case "ArrowUp":
               e.preventDefault();
@@ -54,5 +51,6 @@ export function listenForKeys() {
           }
         }
         break;
+    }
   });
 }
