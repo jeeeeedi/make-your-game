@@ -1,5 +1,5 @@
-import { entities } from "./game.js";
-import { checkCollisions, running, paused } from "./states.js";
+import { entities, checkCollisions, delay } from "./game.js";
+import { running, paused } from "./states.js";
 
 export const gameBoard = document.getElementById("game-board");
 
@@ -37,7 +37,7 @@ export class Entity {
     }
   }
   move(rowChange, colChange) {
-    if (!running && paused) return;
+    if (!running || paused) return;
     let newRow = this.row + rowChange;
     let newCol = this.col + colChange;
     const targetEntity = entities.all.find(
@@ -47,13 +47,9 @@ export class Entity {
       this.row = newRow;
       this.col = newCol;
       this.element.style.gridArea = `${this.row} / ${this.col}`;
-      //console.log(`Moved to: row=${this.row}, col=${this.col}`);
       checkCollisions();
-    } else {
-      //console.log(`Collision detected at: row=${newRow}, col=${newCol}`); // Log collision
-      if (this instanceof Spook) {
-        this.randomMove(); // Retry movement in a different direction
-      }
+    } else if (this instanceof Spook) {
+      this.randomMove(); // Retry movement in a different direction
     }
   }
 
@@ -78,6 +74,7 @@ export class Player extends Entity {
     this.element.style.backgroundSize = 'cover';
     //this.element.textContent = "😇";
     this.updatePosition(9, 9);
+    this.lives = 5;
   }
 }
 
@@ -87,7 +84,30 @@ export class Spook extends Entity {
     this.element.style.backgroundImage = 'url("./Lion.png")';
     this.element.style.backgroundSize = 'contain';
     //this.element.textContent = "👻";
+    this.isMoving = false;
   }
+
+  startMoving() {
+    if (!running || paused) return;
+    this.isMoving = true;
+    this.moveLoop();
+  }
+
+  stopMoving() {
+    this.isMoving = false;
+  }
+
+  moveLoop() {
+    if (!this.isMoving || !running || paused) return;
+    
+    this.randomMove();
+    delay(500, () => {
+      if (this.isMoving) {
+        this.moveLoop();
+      }
+    });
+  }
+
   randomMove() {
     const directions = [
       { rowChange: -1, colChange: 0 }, // Up
@@ -96,7 +116,8 @@ export class Spook extends Entity {
       { rowChange: 0, colChange: 1 }, // Right
     ];
     let canMove = false;
-    while (!canMove) {
+    let attempts = 0;
+    while (!canMove && attempts < 4) {
       const randomDirection =
         directions[Math.floor(Math.random() * directions.length)];
       const newRow = this.row + randomDirection.rowChange;
@@ -113,6 +134,7 @@ export class Spook extends Entity {
         this.move(randomDirection.rowChange, randomDirection.colChange);
         canMove = true;
       }
+      attempts++;
     }
   }
 }
@@ -145,13 +167,6 @@ export class Door extends Entity {
 export class Floor extends Entity {
   constructor(row, col) {
     super(`floor`, row, col);
-    this.activate();
-  }
-}
-
-export class Destructible extends Entity {
-  constructor(row, col) {
-    super(`destructible`, row, col);
     this.activate();
   }
 }

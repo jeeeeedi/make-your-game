@@ -1,51 +1,25 @@
 import {
   running,
   paused,
-  togglePaused,
   startGame,
-  placeBomb,
 } from "./states.js";
 import {
-  activateSpooksOneByOne,
-  entities /*player, spook, bomb, explosion, door, /*floor , destructible */,
+  entities,
 } from "./game.js";
-import { resumeTimer, pauseTimer } from "./timer.js";
+import { placeBomb } from "./explosions.js";
 
 export function listenForKeys() {
+
+  // Game control keys (not movement)
   document.addEventListener("keydown", (e) => {
-    console.log(`Key pressed: ${e.key}`);
     switch (e.key) {
       case "Enter":
         if (!running) startGame();
         break;
-      case "Escape":
-          pauseTimer();
-          togglePaused();
-          cancelAnimationFrame(activateSpooksOneByOne);
-          if (confirm("Are you sure you want to quit the current game?")) {
-            location.reload();
-          } else {
-            togglePaused(); // Toggle the paused state
-            resumeTimer(); // Resume the timer
-          }
-        break;
-      case " ":
-        if (running) {
-          e.preventDefault(); // Prevent scrolling
-          if (paused) {
-            togglePaused(); // Toggle the paused state
-            resumeTimer(); // Resume the timer
-          } else {
-            cancelAnimationFrame(activateSpooksOneByOne);
 
-            pauseTimer(); // Pause the timer
-            togglePaused(); // Toggle the paused state
-          }
-        }
-        break;
-      case "x":
+      case "x": 
       case "X":
-        if (running && !paused)
+        if (running && !paused) {
           placeBomb(entities.player.row, entities.player.col);
         break;
       default:
@@ -78,9 +52,7 @@ export function listenForKeys() {
               entities.player.element.style.transform = "scaleX(1)"; // Reset to normal orientation
               break;
           }
-          // console.log(`Player position after move: row=${entities.player.row}, col=${entities.player.col}`);
         }
         break;
-    }
   });
 }

@@ -1,4 +1,5 @@
-import { running, paused, delay, lose } from "./states.js";
+import { running, paused, lose } from "./states.js";
+import { delay } from "./game.js";
 
 export const timerState = {
   timeLeft: 60, // 1 minute
@@ -51,13 +52,15 @@ export function stopTimer() {
 }
 
 export function timer(onComplete) {
-  if (running && !paused) {
-    resumeTimer(onComplete);
+  if (!running) {
+    startTimer(60, onComplete);
   } else if (paused) {
     pauseTimer();
-  } if (!running) {
-    startTimer(60, onComplete);
-  } if (timerState.timeLeft === 0) {
+  } else if (running && !paused) {
+    resumeTimer(onComplete);
+  }
+  
+  if (timerState.timeLeft === 0) {
     stopTimer();
     lose();
   }

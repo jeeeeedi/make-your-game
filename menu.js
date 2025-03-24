@@ -1,56 +1,118 @@
-//import { togglePause, pauseGame, resumeGame } from './game.js';
-
-const menuButton = document.getElementById("menuButton");
-const popupMenu = document.getElementById("popupMenu");
-const closeMenu = document.getElementById("closeMenu");
-const resumeGameButton = document.getElementById("resumeGame");
-const howToPlay = document.getElementById("howToPlay");
-const gameTheme = document.getElementById("gameTheme");
+import { startGame, togglePaused, running } from "./states.js";
+import { entities } from "./game.js";
+import { timer } from "./timer.js";
 
 export function setupMenu() {
-    console.log("menu.js is loaded!");
+    // Get menu elements
+    const menu = document.getElementById('game-menu');
+    const controlsWindow = document.getElementById('controls-window');
+    const gameOverWindow = document.getElementById('game-over-window');
+    const menuButton = document.getElementById("menu-button");
+    const startGameBtn = document.getElementById("start-game-btn");
 
-    // Display the menu at the start of the game
-    menuState("block");
-    pauseGame(); // Pause the game when the menu is displayed
-
+    // Add menu button class and event listener
+    menuButton.classList.add('menu-btn');
     menuButton.addEventListener("click", () => {
-        menuState("block");
-        pauseGame(); // Pause the game when the menu is displayed
+        handleMenuVisibility(true);
     });
 
-    closeMenu.addEventListener("click", () => {
-        menuState("none");
-        resumeGame(); // Resume the game when the menu is closed
+    // Create controls button for menu
+    const controlsButton = document.createElement("button");
+    controlsButton.id = "controls-button";
+    controlsButton.classList.add('menu-btn');
+    controlsButton.textContent = "Controls";
+    controlsButton.addEventListener("click", () => {
+        handleMenuVisibility(true, true);
+    });
+    // Add controls button to menu window
+    menu.appendChild(controlsButton);
+
+    // Add event listeners for menu buttons
+    startGameBtn.addEventListener("click", () => {
+        menu.style.display = "none";
+        if (running) {
+            // Resume game
+            togglePaused(false);
+            // Resume spook movements
+            entities.spooks.forEach(spook => {
+                if (spook.active) {
+                    spook.startMoving();
+                }
+            });
+            // Resume timer
+            timer();
+            // Show menu button
+            menuButton.style.display = "block";
+        } else {
+            // Reset all spooks
+            entities.spooks.forEach(spook => {
+                spook.deactivate();
+                spook.stopMoving();
+            });
+            // Start new game
+            startGame();
+        }
     });
 
-    resumeGameButton.addEventListener("click", () => {
-        menuState("none");
-        resumeGame(); // Resume the game when the menu is closed
+    document.getElementById("controls-btn").addEventListener("click", () => {
+        menu.style.display = "none";
+        controlsWindow.style.display = "flex";
     });
 
-    howToPlay.addEventListener("click", () => {
-        alert(
-            "Press 'Enter' to start a game. Move using arrow keys. \n" +
-            "Avoid or kill ghosts. Every destroyed wall or killed spook will give you XP. \n" +
-            "Controls \n" +
-            "enter starts the game. \n" +
-            "x drops a bomb on the current tile. \n" +
-            "left, right, up, down moves the player left, right, up, or down, respectively. \n" +
-            "esc quits the current game and starts a new game. \n " +
-            "Good luck!"
-        );
+    document.getElementById("close-controls-btn").addEventListener("click", () => {
+        controlsWindow.style.display = "none";
+        menu.style.display = "flex";
     });
 
-    let red = false;
-    gameTheme.addEventListener("click", () => {
-        red = !red;
-        document.body.style.backgroundColor = red ? "pink" : "black";
+    document.getElementById("restart-btn").addEventListener("click", () => {
+        location.reload();
     });
-    console.log("Menu displayed");
+
+    // Add event listener for game over window close button
+    document.getElementById("close-game-over-btn").addEventListener("click", () => {
+        gameOverWindow.style.display = "none";
+        // Show menu button and enable Start Game button
+        menuButton.style.display = "block";
+        startGameBtn.textContent = "Start Game";
+        startGameBtn.disabled = false;
+        startGameBtn.style.cursor = "pointer";
+        startGameBtn.style.opacity = "1";
+    });
 }
 
-// Menu states: "block" = show the menu, "none" = hide it.
-export function menuState(state) {
-    popupMenu.style.display = state;
+function handleMenuVisibility(show, showControls = false) {
+    const menu = document.getElementById("game-menu");
+    const controlsWindow = document.getElementById("controls-window");
+    const gameOverWindow = document.getElementById("game-over-window");
+    const menuButton = document.getElementById("menu-button");
+    const startGameBtn = document.getElementById("start-game-btn");
+
+    if (show) {
+        if (showControls) {
+            controlsWindow.style.display = "flex";
+        } else {
+            menu.style.display = "flex";
+            // Update button text and state based on game state
+            if (running) {
+                startGameBtn.textContent = "Resume";
+                startGameBtn.disabled = false;
+                startGameBtn.style.cursor = "pointer";
+                startGameBtn.style.opacity = "1";
+            } else {
+                startGameBtn.textContent = "Start Game";
+                startGameBtn.disabled = false;
+                startGameBtn.style.cursor = "pointer";
+                startGameBtn.style.opacity = "1";
+            }
+        }
+        menuButton.style.display = "none";
+        if (running) {
+            togglePaused(true);
+        }
+    } else {
+        menu.style.display = "none";
+        controlsWindow.style.display = "none";
+        gameOverWindow.style.display = "none";
+        menuButton.style.display = "block";
+    }
 }

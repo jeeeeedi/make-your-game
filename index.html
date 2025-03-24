@@ -16,7 +16,7 @@
       <h1>BOMBERMAN</h1>
       <div id="status">press enter to start playing.</div>
       <p>goal: exit the maze through the door that is hidden behind a destructible wall.</br>
-        avoid or kill spooks. every destroyed wall or killed spook will give you 00 XP.</p>
+        avoid or kill spooks. every destroyed wall or killed spook will give you XP.</p>
       </br>
       <table class="scoreboard">
         <tr>
@@ -31,42 +31,51 @@
         </tr>
       </table>
       </br>
-    </header>
+    </header> 
+    
     <!-- Game Board -->
     <div class="content">
-      <div id="game-board">
+      <div class="game-container">
+        <div id="game-board"></div>
+        <button id="menu-button" class="menu-btn">Menu / Pause</button>
       </div>
     </div> 
 
+    <!-- Main Menu -->
+    <div id="game-menu">
+      <div class="modal-content">
+        <h2>Bomberman</h2>
+        <button class="menu-btn" id="start-game-btn">Start Game</button>
+        <button class="menu-btn" id="controls-btn">Controls</button>
+        <button class="menu-btn" id="restart-btn">Restart</button>
+      </div>
+    </div>
+
+    <!-- Controls Window -->
+    <div id="controls-window" style="display: none;">
+      <div class="modal-content">
+        <h2>Controls</h2>
+        <div class="controls-text">
+          <p><strong>Key</strong> <strong>Action</strong></p>
+          <p>x drops a bomb on the current tile</p>
+          <p>left, right, up, down moves the player left, right, up, or down, respectively</p>
+          <p>esc quits the current game and restarts</p>
+        </div>
+        <button class="menu-btn" id="close-controls-btn">Close</button>
+      </div>
+    </div>
+
+    <!-- Game Over Window -->
+    <div id="game-over-window" style="display: none;">
+      <div class="modal-content">
+        <h2 id="game-over-text"></h2>
+        <button class="menu-btn" id="close-game-over-btn">Close</button>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer>
-      <h2>Controls</h2>
-      <table class="instructions">
-        <tr>
-          <th>Key</th>
-          <th>Action</th>
-        </tr>
-        <tr>
-          <td>enter</td>
-          <td>starts the game and timer</td>
-        </tr>
-        <tr>
-          <td>x</td>
-          <td>drops a bomb on the current tile</td>
-        </tr>
-        <tr>
-          <td>left, right, up, down</td>
-          <td>moves the player left, right, up, or down, respectively</td>
-        </tr>
-        <tr>
-          <td>space</td>
-          <td>pauses the game or continues a paused game</td>
-        </tr>
-        <tr>
-          <td>esc</td>
-          <td>quits the current game and starts a new game</td>
-        </tr>
-      </table>
+
       <p>
         Bomberman by
         <a href="https://www.linkedin.com/in/anastasia-suhareva-09599651/">Anastasia</a>
