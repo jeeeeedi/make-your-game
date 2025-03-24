@@ -120,16 +120,16 @@ export class Spook extends Entity {
 export class Bomb extends Entity {
   constructor(row, col) {
     super("bomb", row, col);
-    this.element.style.backgroundImage = 'url("./bomb.png")';
-    this.element.style.backgroundSize = 'cover';
-    //this.element.textContent = "💣";
+    /* this.element.style.backgroundImage = 'url("./bomb.png")';
+    this.element.style.backgroundSize = 'cover'; */
+    this.element.textContent = "✨";
   }
 }
 
 export class Explosion extends Entity {
   constructor(row, col) {
     super("explosion", row, col);
-    //this.element.textContent = "💥";
+    this.element.textContent = "✨";
   }
 }
 
