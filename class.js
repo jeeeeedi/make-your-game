@@ -70,7 +70,9 @@ export class Player extends Entity {
   constructor(row, col) {
     super("player", row, col);
     this.activate();
-    this.element.textContent = "😇";
+    this.element.style.backgroundImage = 'url("./Dog_1.png")';
+    this.element.style.backgroundSize = 'cover';
+    //this.element.textContent = "😇";
     this.updatePosition(9, 9);
     this.lives = 5;
   }
@@ -79,7 +81,9 @@ export class Player extends Entity {
 export class Spook extends Entity {
   constructor(row, col) {
     super("spook", row, col);
-    this.element.textContent = "👻";
+    this.element.style.backgroundImage = 'url("./Lion.png")';
+    this.element.style.backgroundSize = 'contain';
+    //this.element.textContent = "👻";
     this.isMoving = false;
   }
 
@@ -122,6 +126,11 @@ export class Spook extends Entity {
         (entity) => entity.row === newRow && entity.col === newCol
       );
       if (targetEntity && targetEntity.element.classList.contains("floor")) {
+        if (randomDirection.colChange === -1) {
+          this.element.style.transform = "scaleX(-1)"; // Reverse image when moving left
+        } else {
+          this.element.style.transform = "scaleX(1)"; // Reset image orientation for other directions
+        }
         this.move(randomDirection.rowChange, randomDirection.colChange);
         canMove = true;
       }
@@ -133,21 +142,25 @@ export class Spook extends Entity {
 export class Bomb extends Entity {
   constructor(row, col) {
     super("bomb", row, col);
-    this.element.textContent = "💣";
+    /* this.element.style.backgroundImage = 'url("./bomb.png")';
+    this.element.style.backgroundSize = 'cover'; */
+    this.element.textContent = "✨";
   }
 }
 
 export class Explosion extends Entity {
   constructor(row, col) {
     super("explosion", row, col);
-    this.element.textContent = "💥";
+    this.element.textContent = "✨";
   }
 }
 
 export class Door extends Entity {
   constructor(row, col) {
     super("door", row, col);
-    this.element.textContent = "🚪";
+    this.element.style.backgroundImage = 'url("./exitsign.png")';
+    this.element.style.backgroundSize = 'contain';
+    //this.element.textContent = "🚪";
   }
 }
 
