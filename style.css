@@ -1,23 +1,29 @@
 @import url("https://fonts.googleapis.com/css2?family=Jersey+10&family=Tiny5&display=swap");
 
 body {
-  padding-top: 60px;
+  padding-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: black;
+  background-color: rgb(198, 222, 168);
   margin: 0;
   font-family: "Tiny5", sans-serif;
   font-weight: 400;
   font-style: normal;
+  background-image: url("./Free-Sky-with-Clouds-Background-Pixel-Art6.jpg");
+  background-size: cover;
 }
 
 h1,
-h2,
-p {
+#goal {
   text-align: center;
-  color: greenyellow;
+  color: darkblue;
+}
+
+h2 {
+  text-align: center;
+  color: red;
 }
 
 .scoreboard {
@@ -25,7 +31,7 @@ p {
   width: 100%;
   text-align: center;
   font-size: 1.5rem;
-  color: red;
+  color: maroon;
   border: 4px solid pink;
   border-radius: 8px;
 }
@@ -38,27 +44,25 @@ p {
   display: grid;
   grid-template-columns: repeat(17, 40px);
   grid-template-rows: repeat(17, 40px);
-  background-color: rgb(171, 198, 103);
+  background-color: rgb(198, 222, 168);
 }
 
 .wall {
-  background-image: url("./tile52.png");
-  background-color: rgb(171, 198, 103);
-  filter: hue-rotate(260deg) brightness(4.5) saturate(16%);
-  /* Applies a color filter to recolor the image */
+  background-image: url("./wall.png");
+  filter: hue-rotate(350deg) brightness(1.5);
   background-size: cover;
-  border-radius: 4px;
-  box-shadow: inset 2px 2px 4px 2px rgb(1, 21, 61);
+  border-radius: 2px;
+  box-shadow: inset 2px 2px 4px 2px rgb(145, 157, 179);
 }
 
 .destructible {
-  background-image: url("./rocks1_5.png");
+  background-image: url("./rocks2_2.png");
   background-size: cover;
-  background-color: rgb(171, 198, 103);
+  background-color: rgb(198, 222, 168);
 }
 
 .floor {
-  background-color: rgb(171, 198, 103);
+  background-color: rgb(198, 222, 168);
 }
 
 #game-board,
@@ -96,13 +100,10 @@ p {
 
 .explosion {
   position: absolute;
-  /* background-image: url("./smoke.png"); */
   font-size: 60px;
   background-size: cover;
   width: 80px;
-  /* Frame width */
   height: 80px;
-  /* Frame height */
   top: 20px;
   left: 20px;
   z-index: 10;
@@ -215,7 +216,7 @@ footer p {
   font-family: "Tiny5", sans-serif;
   font-weight: 400;
   font-style: normal;
-  
+
   padding: 0.8rem 1.5rem;
   font-size: 1.1rem;
   background-color: #333;
@@ -234,7 +235,6 @@ footer p {
   background-color: greenyellow;
   color: #333;
 }
-
 
 .game-container {
   position: relative;
