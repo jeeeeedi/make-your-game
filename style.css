@@ -1,8 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Jersey+10&family=Tiny5&display=swap");
 
 body {
-  padding-top: 60px;
-
+  padding-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
